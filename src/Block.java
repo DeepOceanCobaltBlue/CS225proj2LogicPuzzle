@@ -11,7 +11,22 @@ import java.awt.event.ActionListener;
  *
  */
 public class Block implements ActionListener {
+    // __ PRIVATE FIELDS __
+    private Square[][] matrix;
 
+    // __ CONSTRUCTORS __
+    public Block() {
+        matrix = new Square[4][4];
+    }
+
+    // __ FUNCTIONS __
+    private void changeSquareToTrue() {}
+    private void changeSquareToFalse() {}
+    private void changeSquareToEmpty() {}
+
+    // __ ACCESSORS __
+
+    // __ OVERRIDES __
 
     /** This method handles interactions between the user and any square within the
      * matrix. This is done by calling specific methods based on the state of the square
