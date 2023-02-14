@@ -16,7 +16,7 @@ public class Block implements ActionListener {
 
     // __ CONSTRUCTORS __
     public Block() {
-        matrix = new Square[4][4];
+        matrix = new Square[2][2];
     }
 
     // __ FUNCTIONS __

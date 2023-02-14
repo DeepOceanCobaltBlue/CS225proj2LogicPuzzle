@@ -82,7 +82,7 @@ public class Square extends JButton {
         // update image based on desired state
         switch(newState) {
             case EMPTY:
-                g2d.drawString("-", 0, 0); // TODO: change to " "
+                g2d.drawString("-", 0, 0); // TODO: change to " " after testing cycling displayImage
                 break;
             case FALSE:
                 g2d.setColor(Color.red);
@@ -102,7 +102,7 @@ public class Square extends JButton {
      */
     public void nextState() {
         switch(this.currentState) {
-            case EMPTY: // case TRUE: or Error condition >> reset to EMPTY
+            case EMPTY:
                 this.currentState = State.FALSE;
                 break;
             case FALSE:
