@@ -1,5 +1,6 @@
 /* Work Log
  * 2/14 [chris] - created class
+ * 2/16 [andrew] - implemented UML design for class
  */
 public class GameBoard {
 
