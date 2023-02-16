@@ -47,20 +47,20 @@ public class Square extends JButton {
      *
      * @param rowIndex - index for the row housing this square
      * @param colIndex - index for the column housing this square
-     * @param state - 0 = EMPTY, 1 = TRUE, 2 = FALSE
+     * @param CorrectState - 0 = EMPTY, 1 = TRUE, 2 = FALSE
      */
-    public Square(int rowIndex, int colIndex, int state) {
+    public Square(int rowIndex, int colIndex, State CorrectState) {
         this();
         this.rowIndex = rowIndex;
         this.colIndex = colIndex;
-        switch(state) {
-            case 0:
+        switch(CorrectState) {
+            case EMPTY:
                 this.correctState = State.EMPTY;
                 break;
-            case 1:
+            case FALSE:
                 this.correctState = State.TRUE;
                 break;
-            case 2:
+            case TRUE:
                 this.correctState = State.FALSE;
                 break;
         }
@@ -123,6 +123,21 @@ public class Square extends JButton {
     }
 
     // __ ACCESSORS __
+
+    public State getCurrentState() { return this.currentState; }
+
+    public void setCurrentState(State newState) {
+        this.currentState = newState;
+    }
+    public State getCorrectState() {
+        return correctState;
+    }
+    public int getRowIndex() {
+        return rowIndex;
+    }
+    public int getColIndex() {
+        return colIndex;
+    }
 
 
     // __ OVERRIDES __
