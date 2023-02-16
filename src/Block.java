@@ -5,6 +5,7 @@
  * 2/16 [chris] -
  */
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -100,5 +101,9 @@ public class Block implements ActionListener {
                 changeSquareToEmpty(clicked);
                 break;
         }
+    }
+
+    public Component getSquare(int a, int b) {
+        return matrix[a][b];
     }
 }
