@@ -7,12 +7,16 @@
  *                - created method templates
  *                - wrote getters
  *
+ * 2/16 [phoenix] - added conditional to loadGame
+ *                - wrote field comments
  */
 import javax.swing.*;
 
 public abstract class PuzzleGame {
     // __ PRIVATE FIELDS __
+    // Game board on which handles the text elements of the game
     private GameBoard gameBoard;
+    // Creates and/or formats all the graphical elements of the game
     private GUI gui;
 
     // __ CONSTRUCTORS __

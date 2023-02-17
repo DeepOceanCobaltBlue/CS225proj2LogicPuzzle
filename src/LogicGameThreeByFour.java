@@ -6,6 +6,9 @@
  *                - created method templates
  *                - wrote getters
  *
+ * 2/16 [phoenix] - built basic functionality of methods
+ *                - wrote field comments
+ *
  */
 
 import javax.swing.*;
