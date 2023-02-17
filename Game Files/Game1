@@ -1,0 +1,38 @@
+BLOCKS
+Block
+RowTitle,Manatees
+RorTitles,3,4,5,6
+ColumnTitle, Boats
+ColumnTitles,Benny II,Mellow Mel,Samantha,Watery Pete
+TrueRow,4,1,2,3
+END
+Block
+RowTitle,Manatees
+RorTitles,3,4,5,6
+ColumnTitle,Captains
+ColumnTitles,Armstrong,Lloyd,Quinn,Romero
+TrueRow,4,2,1,3
+END
+Block
+RowTitle,Captains
+RowTitles,Armstrong,Lloyd,Quinn,Romero
+ColumnTitle,Boats
+ColumnTitles,Benny II,Mellow Mel,Samantha,Watery Pete
+TrueRow,1,3,2,4
+END
+CLUES
+1. The Benny II is either Captain Lloyd's vessel or Captain Armstrong's boat.
+2. The Watery Pete saw 1 more manatees than Captain Lloyd's vessel.
+3. The Samantha saw 4 manatees.
+4. The boat that saw 6 manatees was led by Captain Armstrong.
+5. Captain Lloyd's vessel saw fewer manatees than Captain Romero's boat.
+END
+STORY
+Minnetonka Manatee Company sent out a number of different boats today on manatee viewing tours. Using only the clues below, match each boat to its captain and determine the total number of manatees seen by each as well as each boat's destination.
+END
+ANSWER
+3,Mellow Mel,Quinn
+4,Samantha,Lloyd
+5,Watery Pete,Romero
+6,Benny II,Armstrong
+END

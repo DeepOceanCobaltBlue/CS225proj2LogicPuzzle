@@ -2,7 +2,7 @@
  * 2/4 [chris] - created class
  *             - wrote class comment
  * 2/14 [chris] - worked on implementation of UML requirements and documentation
- * 2/16 [chris] -
+ * 2/18 [chris] - Adjusted initial
  */
 
 import java.awt.*;
@@ -29,15 +29,49 @@ public class Block implements ActionListener {
     // __ CONSTRUCTORS __
     public Block() {
         matrix = new Square[4][4];
-        initSquares();
+        blockRowTitle = null;
+        blockColTitle  = null;
+        rowTitles = new String[4];
+        columnTitles = new String[4];
+    }
+
+    public Block(String rowTitle, String[] rowTitles, String columnTitle, String[] columnTitles, String order) {
+        this();
+        this.blockRowTitle = rowTitle;
+        this.blockColTitle = columnTitle;
+        this.rowTitles = rowTitles;
+        this.columnTitles = columnTitles;
+
+        /* Index is the column, value is the row, containing TRUE square */
+        String[] tempTrueRows = order.split(",");
+        int[] TrueRows = new int[4];
+        for(int i = 0; i < 4; i++) {
+            TrueRows[i] = Integer.parseInt(tempTrueRows[i]);
+        }
+        initSquares(TrueRows);
     }
 
     // __ FUNCTIONS __
-    private void initSquares() {
+
+    /**
+     * Initializes all Square objects in Block matrix[][] to their CorrectStates and index positions
+     * @param TrueRows
+     */
+    private void initSquares(int[] TrueRows) {
+        /* Move left to right by column and insert TRUE square based on TrueRows value */
+        int columnIndex = 0;
+
+        /* Iterate through all Squares in Block */
         for(int row = 0; row < matrix.length; row++) {
             for(int col = 0; col < matrix[row].length; col++) {
-                matrix[row][col] = new Square(row, col, Square.State.EMPTY);
-                // TODO: update correctState based on gameBoard data
+                /* Initialize TRUE squares */
+                if((col == columnIndex) && (row == TrueRows[columnIndex])) {
+                    matrix[row][col] = new Square(row, col, Square.State.TRUE);
+                    columnIndex++;
+                } else {
+                    /* Initialize FALSE squares */
+                    matrix[row][col] = new Square(row, col, Square.State.FALSE);
+                }
             }
         }
     }
