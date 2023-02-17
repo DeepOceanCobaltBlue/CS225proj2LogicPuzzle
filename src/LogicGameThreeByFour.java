@@ -9,13 +9,18 @@
  * 2/16 [phoenix] - built basic functionality of methods
  *                - wrote field comments
  *
+ * 2/17 [phoenix] - continued work on basic functionality
+ *                - wrote method comments
  */
+
+import sun.java2d.windows.GDIBlitLoops;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 /** This class will manage top level functionality of the game.
  * Functions:
@@ -38,7 +43,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     private final int rows = 2;
     // The maximum number of columns of blocks for a 3x4 game
     private final int maxColumns = 2;
-    // The buttons that perform essential game functions like submitting answers
+    // Array of buttons that perform essential game functions like submitting answers
     private JButton[] functionButtons;
 
     // __ CONSTRUCTORS __
@@ -62,47 +67,47 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
     }*/
 
-    /*private boolean compareBoardToAnswer() {
-            Check if every Square of every Block has the correct state. If yes, return true, else return false.
-    }*/
+    /**
+     * Check if every Square of every Block has the correct state.
+     * @return If correct state, return true, else return false.
+     */
+    private boolean compareBoardToAnswer() {
+            for (Block[] row : blocks) {
+                for (Block block : row) {
+                    if (block != null) {
+                        // block.checkSquares();?
+                    }
+                }
+            }
+            return false;
+    }
 
     /*private ArrayList<Square> findIncorrectBlocks() {
             Similar to compareBoardToAnswer except each Square with a state mismatch is recorded in a list and returned.
     }*/
 
 
+    /**
+     * Swaps the state of a single random Square with an incorrect state to match the correct state.
+     */
+    private void giveHint() {
+        Random rand = new Random();
+        int randBlock = rand.nextInt(3);
+        int randSquare = rand.nextInt(16);
+        Block selBlock = blocks[(randBlock/2)%2][randBlock%2];
+        /*Square[][] selMatrix = selBlock.getMatrix();
+        selMatrix[(randSquare/4)%4][randSquare%4];*/
 
-    /*private void giveHint() {
-            Swaps the state of a single random Square with an incorrect state to match the correct state.
-    }*/
+    }
 
+    /**
+     * Simple method that creates all the non-Square button objects that are needed in the game.
+     */
     private void createButtons() {
         functionButtons[0] = new JButton("Submit Answers");
         functionButtons[0].addActionListener(this);
         functionButtons[1] = new JButton("Hint");
         functionButtons[1].addActionListener(this);
-    }
-
-
-    // __ ACCESSORS __
-    public Block[][] getBlocks() {
-        return blocks;
-    }
-
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getMaxColumns() {
-        return maxColumns;
-    }
-
-    public JButton[] getFunctionButtons() {
-        return functionButtons;
     }
 
     // __ OVERRIDES __
@@ -130,13 +135,53 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
     @Override
     public void play() {
-        setGameBoard(loadGame("none"));
-        createGUI();
+        setGameBoard(loadGame());
+        createGUI(/*Buttons?*/);
         startTime = System.currentTimeMillis();
 
     }
     @Override
     public void actionPerformed(ActionEvent e) {
+        JButton pressedButton;
+        int index = 0;
+        pressedButton = (JButton) e.getSource();
+        while(!functionButtons[index].equals(pressedButton)) {
+            index += 1;
+        }
+        switch (index) {
+            case 0:
+                /*if(compareBoardToAnswer()) {
+                    Tell user they were correct
+                }
+                else {
+                    Tell user they were incorrect
+                }*/
+                break;
+            case 1:
+                // giveHint();
+                break;
+        }
+    }
 
+
+    // __ ACCESSORS __
+    public Block[][] getBlocks() {
+        return blocks;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getMaxColumns() {
+        return maxColumns;
+    }
+
+    public JButton[] getFunctionButtons() {
+        return functionButtons;
     }
 }

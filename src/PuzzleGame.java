@@ -9,6 +9,9 @@
  *
  * 2/16 [phoenix] - added conditional to loadGame
  *                - wrote field comments
+ *
+ * 2/17 [phoenix] - edited loadGame
+ *                - wrote method comments
  */
 import javax.swing.*;
 
@@ -32,6 +35,34 @@ public abstract class PuzzleGame {
 
     // __ FUNCTIONS __
 
+    /**
+     * Initiates the playing of the game
+     */
+    public abstract void play();
+
+    /**
+     * Creates a GameBoard using the information extracted from a selected file.
+     * @return The created game board.
+     */
+    protected GameBoard loadGame() {
+        GameBoard board;
+        /*if (filePath.equals("none")) {
+            board = new GameBoard();
+        }
+        else {
+            //board = new GameBoard(filePath);
+        }*/
+
+        return gameBoard;
+    }
+
+    /**
+     * Creates the GUI that will assemble and format all the graphical elements.
+     * @return The frame that has been created.
+     */
+    protected abstract JFrame createGUI();
+
+    // __ MUTATORS __
 
     protected void setGameBoard(GameBoard gameBoard) {
         this.gameBoard = gameBoard;
@@ -41,21 +72,6 @@ public abstract class PuzzleGame {
         this.gui = gui;
     }
 
-    public abstract void play();
-
-    protected GameBoard loadGame(String filePath) {
-        GameBoard board;
-        if (filePath.equals("none")) {
-            board = new GameBoard();
-        }
-        else {
-            //board = new GameBoard(filePath);
-        }
-
-        return gameBoard;
-    }
-
-    protected abstract JFrame createGUI();
 
     // __ ACCESSORS __
 
