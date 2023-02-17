@@ -2,5 +2,5 @@
  * 2/14 [chris] - created class
  */
 
-public class LogicGame {
+public class PuzzleGame {
 }
