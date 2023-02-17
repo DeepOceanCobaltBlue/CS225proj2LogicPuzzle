@@ -26,19 +26,25 @@ import java.util.ArrayList;
  */
 public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     // __ PRIVATE FIELDS __
+
+    // 2D array of all blocks
     private Block[][] blocks;
+    // Holds the time in milliseconds when the game starts
     private long startTime;
+    // The number of rows of blocks for a 3x4 game
     private final int rows = 2;
+    // The maximum number of columns of blocks for a 3x4 game
     private final int maxColumns = 2;
-    private final int numButtons = 4;
+    // The buttons that perform essential game functions like submitting answers
     private JButton[] functionButtons;
 
     // __ CONSTRUCTORS __
     public LogicGameThreeByFour() {
         super();
+        startTime = 0;
         blocks = new Block[rows][maxColumns];
-        startTime = System.currentTimeMillis();
-        functionButtons = new JButton[numButtons];
+        functionButtons = new JButton[2];
+        createButtons();
     }
 
     /*public LogicGameThreeByFour(params) {
@@ -46,28 +52,10 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     }*/
 
     // __ FUNCTIONS __
-    protected JFrame createGUI() {
-        JFrame frame = new JFrame("Logic Game");
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(750, 300));
 
-        /* Font used by all text in game */
-        Font baseFont = new Font("Arial", Font.BOLD, 16);
-
-        /*
-        * > frame
-        *   > rootPane
-        *     > gamePane - game board
-        *     > controlPane - buttons
-        *     > displayPane - display text to user
-        */
-        return frame;
-    }
 
     /*private String importGameBoard() {
 
-            Get file path to game board file from user.
 
     }*/
 
@@ -85,9 +73,13 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
             Swaps the state of a single random Square with an incorrect state to match the correct state.
     }*/
 
-    public void play() {
-        //  Starts the game.
+    private void createButtons() {
+        functionButtons[0] = new JButton("Submit Answers");
+        functionButtons[0].addActionListener(this);
+        functionButtons[1] = new JButton("Hint");
+        functionButtons[1].addActionListener(this);
     }
+
 
     // __ ACCESSORS __
     public Block[][] getBlocks() {
@@ -111,6 +103,35 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     }
 
     // __ OVERRIDES __
+    @Override
+    protected JFrame createGUI() {
+        setGui(new GUI(getGameBoard()));
+        return getGui().getDisplay();
+        /*JFrame frame = new JFrame("Logic Game");
+        frame.setLayout(new BorderLayout());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(750, 300));
+
+        /* Font used by all text in game *
+        Font baseFont = new Font("Arial", Font.BOLD, 16);
+
+        /*
+         * > frame
+         *   > rootPane
+         *     > gamePane - game board
+         *     > controlPane - buttons
+         *     > displayPane - display text to user
+         *
+        return frame;*/
+    }
+
+    @Override
+    public void play() {
+        setGameBoard(loadGame("none"));
+        createGUI();
+        startTime = System.currentTimeMillis();
+
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
 

@@ -3,9 +3,6 @@
 * */
 
 import javax.swing.*;
-
-import static javafx.scene.input.KeyCode.J;
-
 public class GUI {
     // FIELDS
     /* Reference to finished graphical interface */
