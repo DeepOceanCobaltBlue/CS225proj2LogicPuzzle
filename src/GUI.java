@@ -19,15 +19,18 @@ public class GUI {
     private JFrame rootFrame;
     /* initialized blocks array for creating game panels */
     private Block[][] blocks;
+    /* Control buttons used to alter the state of the game */
+    private JButton[] functions;
 
     // CONSTRUCTOR
     public GUI() {
         this.rootFrame = new JFrame(" Logic Puzzle Game ");
     }
 
-    public GUI(Block[][] blocks) {
+    public GUI(GameBoard gb) {
         this();
-        this.blocks = blocks;
+        this.blocks = gb.getBlocks();
+        this.functions = gb.getControls();
         createGUI();
     }
 

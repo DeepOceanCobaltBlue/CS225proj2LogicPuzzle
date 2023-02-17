@@ -12,7 +12,7 @@
  * 2/17 [phoenix] - continued work on basic functionality
  *                - wrote method comments
  *
- * 2/18 [chris]   = Worked on fileReader and Text file formatting
+ * 2/18 [chris]   - Worked on fileReader and Text file formatting
  */
 
 import javax.swing.*;
@@ -34,31 +34,39 @@ import java.util.Scanner;
  *   - hints, clues, etc.
  */
 public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
-    // __ PRIVATE FIELDS __
-
-    // 2D array of all blocks
-    // private Block[][] blocks;
-    // Holds the time in milliseconds when the game starts
+    // __ ATTRIBUTES __
+    /* Tracks the total time a player spends on a puzzle */
     private long startTime;
-    // The number of rows of blocks for a 3x4 game
-    // private final int rowCount = 2;
-    // The maximum number of columns of blocks for a 3x4 game
-    // private final int columnCount = 2;
-    // Array of buttons that perform essential game functions like submitting answers
+    private long endTime;
+    /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
+    /* Used to control the display of the GUI created from GameBoard */
+    private JFrame guiFrame;
 
     // __ CONSTRUCTORS __
     public LogicGameThreeByFour() {
-        super();
-        startTime = 0;
-        //blocks = new Block[rowCount][columnCount];
-        String filepath = importGameBoard();
-        fileReader(filepath);
-        functionButtons = new JButton[2];
-        createButtons();
+        this.startTime = 0;
+        this.endTime = 0;
+        this.functionButtons = new JButton[2];
+
+        String filepath = importGameBoard();    // get filepath to Game file
+        fileReader(filepath);                   // read file and initialize game board
+        createButtons();                        // Initialize control function buttons and pass to game board
+        createGUI();                            // pass game board to GUI to initialize gui and get root Frame
+
     }
 
     // __ FUNCTIONS __
+
+    /**
+     * Initializes GUI using GameBoard object created from game file.
+     * Retrieves the root frame to be displayed
+     */
+    private void createGUI() {
+        GUI gui = new GUI(super.getGameBoard());
+        super.setGui(gui);
+        this.guiFrame = super.getGui().getDisplay();
+    }
 
     /**
      * Extract and initialize game assets from game file
@@ -131,9 +139,10 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
     /**
      * Open dialogue box to choose game file
-     * @return
+     * @return - path to game file
      */
     private String importGameBoard() {
+        // TODO: No dialogue box yet, just hard code to the only game file
         return "\\Game Files\\Game1";
     }
 
@@ -170,12 +179,16 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
            - set the first Square found to TRUE
          */
 
+        /* initial attempt
         Random rand = new Random();
         int randBlock = rand.nextInt(3);
         int randSquare = rand.nextInt(16);
         Block selBlock = blocks[(randBlock/2)%2][randBlock%2];
         /*Square[][] selMatrix = selBlock.getMatrix();
-        selMatrix[(randSquare/4)%4][randSquare%4];*/
+        selMatrix[(randSquare/4)%4][randSquare%4];
+        */
+
+
 
     }
 
@@ -191,14 +204,23 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     }
 
     public void play() {
-        // TODO: I dont think this method is needed unless we add features later.
-        setGameBoard(loadGame());
-        createGUI(/*Buttons?*/);
+        // TODO: This method should start the game by creating the window to display the GUI
+
         startTime = System.currentTimeMillis();
+        // constructor creates gui, now display it using this.guiFrame and display it
 
     }
 
     // __ OVERRIDES __
+
+    /**
+     * Handles necessary game logic relevant to the control functions used outside the
+     * primary game area.
+     *      Functions include:
+     *          New Game:
+     *          Submit Answers:
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton pressedButton = (JButton) e.getSource();
