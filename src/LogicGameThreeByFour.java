@@ -15,15 +15,11 @@
  * 2/18 [chris]   = Worked on fileReader and Text file formatting
  */
 
-import sun.java2d.windows.GDIBlitLoops;
-
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -41,13 +37,13 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     // __ PRIVATE FIELDS __
 
     // 2D array of all blocks
-    private Block[][] blocks;
+    // private Block[][] blocks;
     // Holds the time in milliseconds when the game starts
     private long startTime;
     // The number of rows of blocks for a 3x4 game
-    private final int rows = 2;
+    // private final int rowCount = 2;
     // The maximum number of columns of blocks for a 3x4 game
-    private final int maxColumns = 2;
+    // private final int columnCount = 2;
     // Array of buttons that perform essential game functions like submitting answers
     private JButton[] functionButtons;
 
@@ -55,14 +51,20 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     public LogicGameThreeByFour() {
         super();
         startTime = 0;
-        blocks = new Block[rows][maxColumns];
+        //blocks = new Block[rowCount][columnCount];
+        String filepath = importGameBoard();
+        fileReader(filepath);
         functionButtons = new JButton[2];
         createButtons();
     }
 
     // __ FUNCTIONS __
 
-    private void FileReader(String filepath) {
+    /**
+     * Extract and initialize game assets from game file
+     * @param filepath - the game file text document to read
+     */
+    private void fileReader(String filepath) {
         File inputFile = new File(filepath);
         Scanner reader;
         try {
@@ -71,28 +73,60 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
             throw new RuntimeException(e);
         }
 
+        Block[][] blocks = new Block[2][2];
+        String story = null;
+        String[] clues = null;
+        String[] answer = null;
+        /* Read in all text from Game File to initialize block objects and gameBoard */
         while(reader.hasNext()) {
+
             String inputLine = reader.nextLine();
             switch(inputLine) {
                 case "BLOCKS":
-                    block.
-                    break;
-                case "STORY":
+                    for(int i = 0; i < 3; i++) {
+                        String rowTitle = reader.nextLine();
+                        String[] rowTitles = reader.nextLine().split(",");
+                        String columnTitle = reader.nextLine();
+                        String[] colTitles = reader.nextLine().split(",");
+                        String trueRows = reader.nextLine();
+
+                        switch (i) {
+                            case 0:
+                                blocks[0][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
+                                break;
+                            case 1:
+                                blocks[0][1] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
+                                break;
+                            case 2:
+                                blocks[1][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
+                                break;
+                        }
+                    }
+
                     break;
                 case "CLUES":
+                    String allClues = reader.nextLine();
+                    while(!(reader.nextLine().equals("STORY"))) {
+                        allClues = allClues.concat(",");
+                        allClues = allClues.concat(reader.nextLine());
+                    }
+                    clues = allClues.split(",");
+
+                    break;
+                case "STORY":
+                    story = reader.nextLine();
                     break;
                 case "ANSWER":
+                    String allAnswers = reader.nextLine();
+                    while(reader.hasNext()) {
+                        allAnswers = allAnswers.concat(",");
+                        allAnswers = allAnswers.concat(reader.nextLine());
+                    }
+                    answer = allAnswers.split(",");
                     break;
-
             }
-
-
-
-
-
-
         }
-
+        super.setGameBoard(new GameBoard(clues, answer, story, blocks));
     }
 
     /**
@@ -108,11 +142,15 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
      * @return If correct state, return true, else return false.
      */
     private boolean compareBoardToAnswer() {
+        // TODO: super.getGameBoard().getBlocks();
+        // TODO: boolean boardCorrect = true;
         for (Block[] row : blocks) {
             for (Block block : row) {
-                if (block != null) {
+                // TODO: if(!(block.getCurrentState == block.getCorrectState())) { boardCorrect = false; }
+
+                //if (block != null) {
                     // block.checkSquares();?
-                }
+
             }
         }
         return false;
@@ -124,9 +162,14 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
 
     /**
-     * Swaps the state of a single random Square with an incorrect state to match the correct state.
+     * Reveal an unrevealed or incorrect TRUE square
      */
     private void giveHint() {
+        /* TODO: implement
+           - cycle through Square to find a TRUE square that is EMPTY or FALSE
+           - set the first Square found to TRUE
+         */
+
         Random rand = new Random();
         int randBlock = rand.nextInt(3);
         int randSquare = rand.nextInt(16);
@@ -137,51 +180,30 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     }
 
     /**
-     * Simple method that creates all the non-Square button objects that are needed in the game.
+     * Initialize the buttons for the control functions of the game and pass it to the GameBoard
      */
     private void createButtons() {
         functionButtons[0] = new JButton("Submit Answers");
         functionButtons[0].addActionListener(this);
         functionButtons[1] = new JButton("Hint");
         functionButtons[1].addActionListener(this);
+        super.getGameBoard().setControls(functionButtons);
     }
 
-    // __ OVERRIDES __
-    @Override
-    protected JFrame createGUI() {
-        setGui(new GUI(getGameBoard()));
-        return getGui().getDisplay();
-        /*JFrame frame = new JFrame("Logic Game");
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(750, 300));
-
-        /* Font used by all text in game *
-        Font baseFont = new Font("Arial", Font.BOLD, 16);
-
-        /*
-         * > frame
-         *   > rootPane
-         *     > gamePane - game board
-         *     > controlPane - buttons
-         *     > displayPane - display text to user
-         *
-        return frame;*/
-    }
-
-    @Override
     public void play() {
+        // TODO: I dont think this method is needed unless we add features later.
         setGameBoard(loadGame());
         createGUI(/*Buttons?*/);
         startTime = System.currentTimeMillis();
 
     }
+
+    // __ OVERRIDES __
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton pressedButton;
+        JButton pressedButton = (JButton) e.getSource();
         int index = 0;
-        pressedButton = (JButton) e.getSource();
-        while(!functionButtons[index].equals(pressedButton)) {
+        while(!(functionButtons[index].equals(pressedButton))) {
             index += 1;
         }
         switch (index) {
@@ -201,20 +223,8 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
 
     // __ ACCESSORS __
-    public Block[][] getBlocks() {
-        return blocks;
-    }
-
     public long getStartTime() {
         return startTime;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getMaxColumns() {
-        return maxColumns;
     }
 
     public JButton[] getFunctionButtons() {

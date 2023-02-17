@@ -1,40 +1,69 @@
 /* Work Log
- * 2/16 [Andrew]  - created class
+ * 2/16 [Andrew]- created class
  *              - wrote class comment
  *              - wrote version 1.0 of the class and added documentation
+ * 2/18 [chris] - removed filepath from gameboard and added a parameterized constructor
+ *              - updated class comment to reflect change, updated comments
  */
 
 
-/* Gameboard.java Comment
-This class will be used by the PuzzleGame in order to properly build our Puzzle for the
-user to play. This class contains arrays of clues and answers, as well as the filepath
-that will be read in by the application in order to obtain said clues & answers.
-This class will store all of this information so the PuzzleGame class may instantiate a new,
-fully furnished Gameboard for the user to use.
+import javax.swing.*;
 
+/** Data structure of Game data and assets
+ * This class will be used by the PuzzleGame in order to properly build our Puzzle for the
+ * user to play. This class contains arrays of clues and answers,
+ * This class will store all of this information so the PuzzleGame class may instantiate a new,
+ * fully furnished Gameboard for the user to use.
  */
 public class GameBoard {
+    // __ ATTRIBUTES __
+    /* Clues are the initial information given to the player */
+    private String[] clues;
+    /* The correct relationships between the 3 categories */
+    private String[] answers;
+    /* Initial prompt to the player which will give context to the puzzle */
+    private String story;
+    /* Interactive game assets */
+    private Block[][] blocks;
+    /* Reference used to pass control buttons to GUI in order to display.
+    *  However, logic for controls are handled in the LogicGame class */
+    private JButton[] controls;
 
-    //  16 sqaures in game
-    //  3 blocks
+    // __ CONSTRUCTORS __
+    public GameBoard() {
+        this.clues = new String[4];
+        this.answers = new String[3];
+        this.story = null;
+        this.blocks = null;
+    }
 
-    //  attributes
-    private String[] clues = new String[4]; //  Array to hold clues
-    private String[] answers = new String[3]; // Array to hold answers
-    private String filePath = ""; //    String to contain the filePath
+    public GameBoard(String[] clue, String[] answers, String story, Block[][] blocks) {
+        this.clues = clue;
+        this.answers = answers;
+        this.story = story;
+        this.blocks = blocks;
+    }
 
-    //  methods
-    public String[] getClues(){ //  getter for the clues array
+
+    // __ ACCESSORS __
+    public String[] getClues(){
         return this.clues;
     }
-    public String[] getAnswers(){ //    getter for the answers array
-        return answers;
+    public String[] getAnswers(){
+        return this.answers;
     }
-    public String getFilePath(){ // getter for the filepath directory
-        return filePath;
+    public String getStory() {
+        return this.story;
     }
-    public void setFilePath(String desiredPath){ // setter for the filepath directory
-        this.filePath = desiredPath;
+    public Block[][] getBlocks() {
+        return blocks;
     }
 
+    public void setControls(JButton[] controls) {
+        this.controls = controls;
+    }
+
+    public JButton[] getControls() {
+        return controls;
+    }
 }

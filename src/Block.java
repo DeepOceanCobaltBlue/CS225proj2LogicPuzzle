@@ -2,7 +2,7 @@
  * 2/4 [chris] - created class
  *             - wrote class comment
  * 2/14 [chris] - worked on implementation of UML requirements and documentation
- * 2/18 [chris] - Adjusted initial
+ * 2/18 [chris] - updated initialization constructor for title information and squares
  */
 
 import java.awt.*;
