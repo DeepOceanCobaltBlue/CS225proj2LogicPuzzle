@@ -4,8 +4,8 @@
  *
  */
 
-/** Main class will house the main method and launch a new instance of the logic game
- *
+/**
+ * Main class will house the main method and launch a new instance of the logic game
  */
 public class Main {
     public static void main(String[] args) {

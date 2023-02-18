@@ -21,6 +21,7 @@ public class GUI {
     private Block[][] blocks;
     /* Control buttons used to alter the state of the game */
     private JButton[] functions;
+    // TODO: add gameboard attribute, remove block[][] attribute
 
     // CONSTRUCTOR
     public GUI() {

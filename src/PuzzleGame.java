@@ -11,6 +11,7 @@
 public abstract class PuzzleGame {
     // __ ATTRIBUTES __
     private GUI gui;
+    // TODO: Replace GUI with JFrame
     private GameBoard gameBoard;
 
     // __ ACCESSORS __

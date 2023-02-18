@@ -119,7 +119,6 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
                         allClues = allClues.concat(reader.nextLine());
                     }
                     clues = allClues.split(",");
-
                     break;
                 case "STORY":
                     story = reader.nextLine();
@@ -210,6 +209,8 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
         // constructor creates gui, now display it using this.guiFrame and display it
 
     }
+
+    // TODO: method for returning formatted time once submit button is clicked
 
     // __ OVERRIDES __
 
