@@ -13,6 +13,9 @@
  *                - wrote method comments
  *
  * 2/18 [chris]   - Worked on fileReader and Text file formatting
+ *
+ * 2/18 [phoenix] - created findIncorrectBlocks
+ *                - changed giveHint behavior utilizing findIncorrectBlocks
  */
 
 import javax.swing.*;
@@ -20,7 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Random;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /** This class will manage top level functionality of the game.
@@ -38,6 +41,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     /* Tracks the total time a player spends on a puzzle */
     private long startTime;
     private long endTime;
+    private long penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
     /* Used to control the display of the GUI created from GameBoard */
@@ -47,6 +51,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     public LogicGameThreeByFour() {
         this.startTime = 0;
         this.endTime = 0;
+        this.penaltyTime = 0;
         this.functionButtons = new JButton[2];
 
         String filepath = importGameBoard();    // get filepath to Game file
@@ -152,21 +157,42 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     private boolean compareBoardToAnswer() {
         // TODO: super.getGameBoard().getBlocks();
         // TODO: boolean boardCorrect = true;
-        for (Block[] row : blocks) {
-            for (Block block : row) {
+        for (Block[] blRow : super.getGameBoard().getBlocks()) {
+            for (Block block : blRow) {
                 // TODO: if(!(block.getCurrentState == block.getCorrectState())) { boardCorrect = false; }
 
                 //if (block != null) {
-                    // block.checkSquares();?
+                // block.checkSquares();?
 
             }
         }
         return false;
     }
+    /**
+     * TEMP: Similar to compareBoardToAnswer.
+     * @param includeEmpty Determines whether empty squares are included in the returned ArrayList
+     * @return Each Square with a state mismatch.
+     */
+    private ArrayList<Square> findIncorrectBlocks(boolean includeEmpty) {
+        ArrayList<Square> incSquares = new ArrayList<Square>();
+        for (Block[] row : super.getGameBoard().getBlocks()) {
+            for (Block block : row) {
+                // TODO: Have block handle all square functionality
+                if (block != null) {
+                    for (Square[] sqRow : block.getSquares()) {
+                        for (Square square : sqRow) {
+                            if (square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)) {
+                                incSquares.add(square);
+                            }
+                        }
+                    }
+                }
 
-    /*private ArrayList<Square> findIncorrectBlocks() {
-            Similar to compareBoardToAnswer except each Square with a state mismatch is recorded in a list and returned.
-    }*/
+
+            }
+        }
+        return incSquares;
+    }
 
 
     /**
@@ -176,16 +202,40 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
         /* TODO: implement
            - cycle through Square to find a TRUE square that is EMPTY or FALSE
            - set the first Square found to TRUE
-         */
-
-        /* initial attempt
-        Random rand = new Random();
-        int randBlock = rand.nextInt(3);
-        int randSquare = rand.nextInt(16);
-        Block selBlock = blocks[(randBlock/2)%2][randBlock%2];
-        /*Square[][] selMatrix = selBlock.getMatrix();
-        selMatrix[(randSquare/4)%4][randSquare%4];
         */
+        ArrayList<Square> incSquares = findIncorrectBlocks(false);
+        ArrayList<Square> emptySquares;
+
+        if (incSquares.size() > 0) {
+            for (Square incSquare : incSquares) {
+                // TODO: incSquare.displayError();
+                this.penaltyTime += 60;
+            }
+        }
+        else {
+            emptySquares = findIncorrectBlocks(true);
+            if (emptySquares.size() > 0) {
+                Square selSquare = emptySquares.get((int)(Math.random() * emptySquares.size()));
+                selSquare.setCurrentState(selSquare.getCorrectState());
+            }
+            else {
+                // User Has perfect board
+            }
+
+
+            /*int randBlockIndex = rand.nextInt(3);
+            Block selBlock = super.getGameBoard().getBlocks()[(randBlockIndex / 2) % 2][randBlockIndex % 2];
+            for (Square[] sqRow : selBlock.getSquares()) {
+                for (Square square : sqRow) {
+                    if (square.getCurrentState() == Square.State.EMPTY *//*!square.isEmpty()?*//*) {
+                        emptySquares.add(square);
+                    }
+                }
+            }
+            if (emptySquares.size() > 0) {
+
+            }*/
+        }
 
 
 
@@ -230,7 +280,8 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
             index += 1;
         }
         switch (index) {
-            case 0:
+            case 0: // Submit Answer
+                endTime = System.currentTimeMillis();
                 /*if(compareBoardToAnswer()) {
                     Tell user they were correct
                 }
@@ -238,7 +289,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
                     Tell user they were incorrect
                 }*/
                 break;
-            case 1:
+            case 1: // Hint
                 // giveHint();
                 break;
         }
