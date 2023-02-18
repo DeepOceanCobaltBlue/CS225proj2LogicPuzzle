@@ -16,6 +16,7 @@
  */
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -113,21 +114,24 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
                     break;
                 case "CLUES":
-                    String allClues = reader.nextLine();
-                    while(!(reader.nextLine().equals("STORY"))) {
+                    String allClues = "";
+                    String nextClue = reader.nextLine();
+                    while(!(nextClue.equals("STORY"))) {
+                        allClues = allClues.concat(nextClue);
                         allClues = allClues.concat(",");
-                        allClues = allClues.concat(reader.nextLine());
+                        nextClue = reader.nextLine();
                     }
                     clues = allClues.split(",");
-                    break;
-                case "STORY":
+                    /* STORY title was just read */
                     story = reader.nextLine();
                     break;
                 case "ANSWER":
-                    String allAnswers = reader.nextLine();
-                    while(reader.hasNext()) {
+                    String allAnswers = "";
+                    String nextAnswer = reader.nextLine();
+                    while(!(nextAnswer.equals("END"))) {
+                        allAnswers = allAnswers.concat(nextAnswer);
                         allAnswers = allAnswers.concat(",");
-                        allAnswers = allAnswers.concat(reader.nextLine());
+                        nextAnswer = reader.nextLine();
                     }
                     answer = allAnswers.split(",");
                     break;
@@ -142,53 +146,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
      */
     private String importGameBoard() {
         // TODO: No dialogue box yet, just hard code to the only game file
-        return "\\Game Files\\Game1";
-    }
-
-    /**
-     * Check if every Square of every Block has the correct state.
-     * @return If correct state, return true, else return false.
-     */
-    private boolean compareBoardToAnswer() {
-        // TODO: super.getGameBoard().getBlocks();
-        // TODO: boolean boardCorrect = true;
-        for (Block[] row : blocks) {
-            for (Block block : row) {
-                // TODO: if(!(block.getCurrentState == block.getCorrectState())) { boardCorrect = false; }
-
-                //if (block != null) {
-                    // block.checkSquares();?
-
-            }
-        }
-        return false;
-    }
-
-    /*private ArrayList<Square> findIncorrectBlocks() {
-            Similar to compareBoardToAnswer except each Square with a state mismatch is recorded in a list and returned.
-    }*/
-
-
-    /**
-     * Reveal an unrevealed or incorrect TRUE square
-     */
-    private void giveHint() {
-        /* TODO: implement
-           - cycle through Square to find a TRUE square that is EMPTY or FALSE
-           - set the first Square found to TRUE
-         */
-
-        /* initial attempt
-        Random rand = new Random();
-        int randBlock = rand.nextInt(3);
-        int randSquare = rand.nextInt(16);
-        Block selBlock = blocks[(randBlock/2)%2][randBlock%2];
-        /*Square[][] selMatrix = selBlock.getMatrix();
-        selMatrix[(randSquare/4)%4][randSquare%4];
-        */
-
-
-
+        return "Game Files\\Game1";
     }
 
     /**
@@ -206,6 +164,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
         // TODO: This method should start the game by creating the window to display the GUI
 
         startTime = System.currentTimeMillis();
+        guiFrame.setVisible(true);
         // constructor creates gui, now display it using this.guiFrame and display it
 
     }

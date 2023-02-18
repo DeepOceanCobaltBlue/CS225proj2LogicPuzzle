@@ -46,7 +46,7 @@ public class Block implements ActionListener {
         String[] tempTrueRows = order.split(",");
         int[] TrueRows = new int[4];
         for(int i = 0; i < 4; i++) {
-            TrueRows[i] = Integer.parseInt(tempTrueRows[i]);
+            TrueRows[i] = (Integer.parseInt(tempTrueRows[i]) - 1);
         }
         initSquares(TrueRows);
     }
@@ -58,16 +58,14 @@ public class Block implements ActionListener {
      * @param TrueRows
      */
     private void initSquares(int[] TrueRows) {
-        /* Move left to right by column and insert TRUE square based on TrueRows value */
-        int columnIndex = 0;
-
+        /* Index is the column, value is the row, containing TRUE square */
         /* Iterate through all Squares in Block */
         for(int row = 0; row < matrix.length; row++) {
+
             for(int col = 0; col < matrix[row].length; col++) {
                 /* Initialize TRUE squares */
-                if((col == columnIndex) && (row == TrueRows[columnIndex])) {
+                if(row == (TrueRows[col])) {
                     matrix[row][col] = new Square(row, col, Square.State.TRUE);
-                    columnIndex++;
                 } else {
                     /* Initialize FALSE squares */
                     matrix[row][col] = new Square(row, col, Square.State.FALSE);

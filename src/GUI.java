@@ -49,12 +49,12 @@ public class GUI {
      */
     private void createGUI() {
         this.rootFrame.setLayout(new GridLayout(3, 3));
-        /* blank panel attributes */
-        JPanel blankPanel = new JPanel();
-        // ~~~
-        // ~~~
+        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.rootFrame.setMinimumSize(new Dimension(800, 600));
+        this.rootFrame.setResizable(false);
 
-        JPanel topLeftPanel  = blankPanel;                          /* BLANK */
+
+        JPanel topLeftPanel  = new JPanel();                        /* BLANK */
         JPanel topMidPanel   = createTopTitlePanel(blocks[0][0]);   /* Title */
         JPanel topRightPanel = createTopTitlePanel(blocks[0][1]);   /* Title */
 
@@ -62,9 +62,9 @@ public class GUI {
         JPanel midMidPanel   = createBlockPanel(blocks[0][0]);      /* Block */
         JPanel midRightPanel = createBlockPanel(blocks[0][1]);      /* Block */
 
-        JPanel botLeftPanel  = createSideTitlePanel(blocks[1][1]);  /* Title */
+        JPanel botLeftPanel  = createSideTitlePanel(blocks[1][0]);  /* Title */
         JPanel botMidPanel   = createBlockPanel(blocks[1][0]);      /* Block */
-        JPanel botRightPanel = blankPanel;                          /* BLANK */
+        JPanel botRightPanel = new JPanel();                        /* BLANK */
 
         /* compose root frame */
         this.rootFrame.add(topLeftPanel );
@@ -78,6 +78,10 @@ public class GUI {
         this.rootFrame.add(botLeftPanel );
         this.rootFrame.add(botMidPanel  );
         this.rootFrame.add(botRightPanel);
+
+        for(Component panel : this.rootFrame.getComponents()) {
+            panel.setPreferredSize(new Dimension(120,120));
+        }
     }
 
     /**
