@@ -61,7 +61,13 @@ public class GUI implements ActionListener{
         controlPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,1,1,3)));
 
         /* initialize controlPanel components */
+        JButton hintButton = gameBoard.getControls()[0];
+        hintButton.setText("Get Hint");
+        JButton submitButton = gameBoard.getControls()[1];
+        submitButton.setText("Submit");
         /* compose controlPanel */
+        controlPanel.add(hintButton, BorderLayout.NORTH);
+        controlPanel.add(submitButton, BorderLayout.SOUTH);
 
         /* Used to display information to the player */
         JPanel infoPanel = new JPanel(new BorderLayout());
