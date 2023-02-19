@@ -58,34 +58,51 @@ public class GUI implements ActionListener{
     private void createGUI() {
         /* Houses the control function buttons for the player to interact with */
         JPanel controlPanel = new JPanel(new BorderLayout());
-        controlPanel.setPreferredSize(new Dimension(100, 600));
+        controlPanel.setPreferredSize(new Dimension(200, 600));
         controlPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,1,1,3)));
 
         /* initialize controlPanel components */
         JButton hintButton = gameBoard.getControls()[0];
         hintButton.setText("Get Hint");
+
         JButton submitButton = gameBoard.getControls()[1];
         submitButton.setText("Submit");
+
+        JTextArea feedbackTextArea = new JTextArea();
+        feedbackTextArea.setPreferredSize(new Dimension((int)controlPanel.getPreferredSize().getWidth(), 200));
+        feedbackTextArea.setBorder(new LineBorder(Color.black));
+        feedbackTextArea.setText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n How to play\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                ">> 1) Click buttons to change their state.\n\n>> 2) A red X represents a False relationship and a " +
+                "green circle represents a True relationship between the row and column subjects. \n\n>> 3) Fill the " +
+                "entire board and hit submit to see if you correctly answered the logic puzzle.\n\n>> 4) If you get " +
+                "stuck, ask for a hint(above) and an incorrect square will be highlighted or a correct square will be " +
+                "filled in for you!\n\n>> 5) You can only hit submit once so logic your way to the solution and have fun!");
+        feedbackTextArea.setLineWrap(true);
+        feedbackTextArea.setEditable(false);
+
         /* compose controlPanel */
         controlPanel.add(hintButton, BorderLayout.NORTH);
+        controlPanel.add(feedbackTextArea, BorderLayout.CENTER);
         controlPanel.add(submitButton, BorderLayout.SOUTH);
 
         /* Used to display information to the player */
         JPanel infoPanel = new JPanel(new BorderLayout());
         infoPanel.setPreferredSize(new Dimension(250, 600));
         infoPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,3,1,1)));
+
         JPanel infoButtonPanel = new JPanel();
         infoButtonPanel.setLayout(new BoxLayout(infoButtonPanel, BoxLayout.X_AXIS));
+
         Font buttonFont = new Font("Arial", Font.BOLD, 10);
 
         /* initialize infoPanel components */
         JButton clueButton = new JButton("Clues");
         clueButton.addActionListener(this);
+        clueButton.setBackground(new Color(150, 255, 255, 200));
         clueButton.setPreferredSize(new Dimension(50, 35));
         clueButton.setFont(buttonFont);
 
         JButton storyButton = new JButton("Story");
-        storyButton.setBackground(new Color(150, 255, 255, 200));
         storyButton.addActionListener(this);
         storyButton.setPreferredSize(new Dimension(30, 35));
         storyButton.setFont(buttonFont);
@@ -95,7 +112,7 @@ public class GUI implements ActionListener{
         notesButton.setPreferredSize(new Dimension(30, 35));
         notesButton.setFont(buttonFont);
 
-        /*
+        /* TODO: reinsert if an answer field is implemented
         JButton answerButton = new JButton("Answer");
         answerButton.addActionListener(this);
         answerButton.setPreferredSize(new Dimension(30, 35));
@@ -104,7 +121,6 @@ public class GUI implements ActionListener{
 
         JTextArea infoTextArea = new JTextArea();
         infoTextArea.setPreferredSize(new Dimension((int)infoPanel.getPreferredSize().getWidth(), 300));
-        infoTextArea.setText(this.gameBoard.getStory());
         infoTextArea.setLineWrap(true);
         infoTextArea.setEditable(false);
 
@@ -113,6 +129,7 @@ public class GUI implements ActionListener{
         infoButtonPanel.add(storyButton, BorderLayout.NORTH);
         infoButtonPanel.add(notesButton, BorderLayout.NORTH);
         //infoButtonPanel.add(answerButton, BorderLayout.NORTH);
+
         infoPanel.add(infoButtonPanel, BorderLayout.NORTH);
         infoPanel.add(infoTextArea, BorderLayout.CENTER);
 
@@ -120,7 +137,6 @@ public class GUI implements ActionListener{
         JPanel gamePanel = new JPanel();
         gamePanel.setBorder(new LineBorder(Color.black));
         gamePanel.setLayout(new GridLayout(3,3));
-        gamePanel.setPreferredSize(new Dimension(850, 600));
 
         /* Initialize gamePanel components*/
         JPanel topLeftPanel  = new JPanel();                        /* BLANK */
@@ -152,10 +168,13 @@ public class GUI implements ActionListener{
             panel.setPreferredSize(new Dimension(120,120));
         }
 
+        /* Initialize infoTextArea text by simulating clicking the "Clues" button */
+        clueButton.doClick();
+
         // Frame settings
         this.rootFrame.setLayout(new BorderLayout());
         this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.rootFrame.setMinimumSize(new Dimension(800, 480));
+        this.rootFrame.setMinimumSize(new Dimension(900, 480));
 
         /* compose frame */
         this.rootFrame.add(controlPanel, BorderLayout.WEST);

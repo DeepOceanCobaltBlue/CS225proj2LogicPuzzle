@@ -38,7 +38,6 @@ import java.util.Scanner;
  */
 public class LogicGameThreeByFour implements ActionListener {
     // __ ATTRIBUTES __
-
     private GUI gui;
     private GameBoard gameBoard;
     /* Tracks the total time a player spends on a puzzle */
@@ -76,11 +75,9 @@ public class LogicGameThreeByFour implements ActionListener {
     // __ FUNCTIONS __
     /**
      * Initializes GUI using GameBoard object created from game file.
-     * Retrieves the root frame to be displayed
      */
     private void createGUI() {
         this.setGUI(new GUI(this.getGameBoard()));
-        //this.setFrame(gui.getDisplay());
     }
 
     /**
@@ -239,12 +236,8 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     public void play() {
-        // TODO: This method should start the game by creating the window to display the GUI
-
         startTime = System.currentTimeMillis();
         this.gui.getDisplay().setVisible(true);
-        // constructor creates gui, now display it using this.guiFrame and display it
-
     }
 
     // TODO: method for returning formatted time once submit button is clicked
@@ -294,19 +287,15 @@ public class LogicGameThreeByFour implements ActionListener {
     public long getStartTime() {
         return startTime;
     }
-
     public GUI getGUI() {
         return gui;
     }
     public GameBoard getGameBoard() {
         return gameBoard;
     }
-    
-    
     public long getEndTime() {
         return endTime;
     }
-
     public long getPenaltyTime() {
         return penaltyTime;
     }
