@@ -4,6 +4,8 @@
  * 2/14 [chris] - worked on implementation of UML requirements and documentation
  * 2/18 [chris] - updated initialization constructor for title information and squares
  * 2/19 [chris] - implemented cycling images for buttons
+ *
+ * 2/19 [phoenix] - moved code from findIncorrectBlocks() from LogicGame to here
  */
 
 import javax.imageio.ImageIO;
@@ -120,6 +122,23 @@ public class Block implements ActionListener {
             clickedSquare.setCurrentState(Square.State.EMPTY);
         }
     }
+
+    //
+    public boolean anyErrors(boolean includeEmpty) {
+        boolean error = false;
+
+        for (Square[] sqRow : this.matrix) {
+            for (Square square : sqRow) {
+                // If the state of any of the Squares is incorrect error will be set to true and stay that way.
+                error = error || (!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty));
+            }
+        }
+        return error;
+    }
+
+    // TODO: setEmptyCorrect() Finds an empty square and sets it to the correct state. Can be random or first empty found.
+
+    // TODO: displayErrors() Finds all incorrect squares and displays their error background(to be implemented).
 
     // __ ACCESSORS __
     public Square[][] getSquares() { return this.matrix;}

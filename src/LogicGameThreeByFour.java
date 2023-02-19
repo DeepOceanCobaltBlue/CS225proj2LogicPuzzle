@@ -14,8 +14,10 @@
  *
  * 2/18 [chris]   - Worked on fileReader and Text file formatting
  *
- * 2/18 [phoenix] - created findIncorrectBlocks
- *                - changed giveHint behavior utilizing findIncorrectBlocks
+ * 2/18 [phoenix] - created findIncorrectBlocks()
+ *                - changed giveHint behavior utilizing findIncorrectBlocks()
+ *
+ * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  */
 
 import javax.swing.*;
@@ -154,92 +156,65 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
      * Check if every Square of every Block has the correct state.
      * @return If correct state, return true, else return false.
      */
-    /*private boolean compareBoardToAnswer() {
-        // TODO: super.getGameBoard().getBlocks();
-        // TODO: boolean boardCorrect = true;
-        for (Block[] blRow : super.getGameBoard().getBlocks()) {
-            for (Block block : blRow) {
-                // TODO: if(!(block.getCurrentState == block.getCorrectState())) { boardCorrect = false; }
+    private ArrayList<Block> findIncorrectBlocks(boolean includeEmpty) {
+        ArrayList<Block> incBlocks = new ArrayList<Block>();
+        Block currentBlock;
 
-                //if (block != null) {
-                // block.checkSquares();?
-
+        for (int i = 0; i < 3; i++) {
+            currentBlock = super.getGameBoard().getBlocks()[(i / 2) % 2][i % 2];
+            if (currentBlock.anyErrors(includeEmpty)) {
+                incBlocks.add(currentBlock);
             }
         }
-        return false;
-    }*/
+        return incBlocks;
+    }
     /**
      * TEMP: Similar to compareBoardToAnswer.
-     * @param includeEmpty Determines whether empty squares are included in the returned ArrayList
-     * @return Each Square with a state mismatch.
+     * @param includeEmpty Determines whether empty Squares are included in the returned ArrayList
+     * @return Each Square with a State mismatch,  optionally includes Squares with State.Empty.
      */
-    private ArrayList<Square> findIncorrectBlocks(boolean includeEmpty) {
+    /*private ArrayList<Square> findIncorrectBlocks(boolean includeEmpty) {
         ArrayList<Square> incSquares = new ArrayList<Square>();
         for (Block[] row : super.getGameBoard().getBlocks()) {
             for (Block block : row) {
-                // TODO: Have block handle all square functionality
                 if (block != null) {
                     for (Square[] sqRow : block.getSquares()) {
                         for (Square square : sqRow) {
-                            if (square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)) {
+                            if (!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)) {
                                 incSquares.add(square);
                             }
                         }
                     }
                 }
-
-
             }
         }
         return incSquares;
-    }
+    }*/
 
 
     /**
      * Reveal an unrevealed or incorrect TRUE square
      */
     private void giveHint() {
+        ArrayList<Block> incBlock;
         /* TODO: implement
            - cycle through Square to find a TRUE square that is EMPTY or FALSE
            - set the first Square found to TRUE
         */
-        ArrayList<Square> incSquares = findIncorrectBlocks(false);
-        ArrayList<Square> emptySquares;
-
-        if (incSquares.size() > 0) {
-            for (Square incSquare : incSquares) {
-                // TODO: incSquare.displayError();
-                this.penaltyTime += 60;
-            }
-        }
-        else {
-            emptySquares = findIncorrectBlocks(true);
-            if (emptySquares.size() > 0) {
-                Square selSquare = emptySquares.get((int)(Math.random() * emptySquares.size()));
-                selSquare.setCurrentState(selSquare.getCorrectState());
-            }
-            else {
+        incBlock = findIncorrectBlocks(false);
+        if (incBlock.size() > 0) {
+            // TODO: currentBlock.displayError();
+            this.penaltyTime += 60;
+        } else {
+            incBlock = findIncorrectBlocks(true);
+            if (incBlock.size() > 0) {
+                // TODO: currentBlock.setEmptyCorrect();
+            } else {
                 // User Has perfect board
             }
-
-
-            /*int randBlockIndex = rand.nextInt(3);
-            Block selBlock = super.getGameBoard().getBlocks()[(randBlockIndex / 2) % 2][randBlockIndex % 2];
-            for (Square[] sqRow : selBlock.getSquares()) {
-                for (Square square : sqRow) {
-                    if (square.getCurrentState() == Square.State.EMPTY *//*!square.isEmpty()?*//*) {
-                        emptySquares.add(square);
-                    }
-                }
-            }
-            if (emptySquares.size() > 0) {
-
-            }*/
         }
-
-
-
     }
+
 
     /**
      * Initialize the buttons for the control functions of the game and pass it to the GameBoard
