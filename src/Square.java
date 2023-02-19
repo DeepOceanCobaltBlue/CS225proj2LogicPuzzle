@@ -136,6 +136,7 @@ public class Square extends JButton {
 
     public void setCurrentState(State newState) {
         this.currentState = newState;
+        setDisplay(this.currentState);
     }
     public State getCorrectState() {
         return correctState;

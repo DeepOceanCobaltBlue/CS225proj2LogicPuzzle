@@ -97,33 +97,27 @@ public class Block implements ActionListener {
         }
     }
 
-    private void changeSquareToTrue(Square clickedSquare) {
+    private void changeSquareToOrFromTrue(Square clickedSquare, Square.State neighborState, Square.State clickedState) {
+        int row = clickedSquare.getRowIndex();
+        int col = clickedSquare.getColIndex();
         /* set each square in clickedSquares row to FALSE */
         for(int a = 0; a < matrix.length; a++) {
-            matrix[ clickedSquare.getRowIndex() ][a].setCurrentState(Square.State.FALSE);
+            matrix[ row ][a].setCurrentState(neighborState);
         }
 
         /* set each square in clickedSquares column to FALSE */
-        for(int b = 0; b < matrix[clickedSquare.getColIndex()].length; b++) {
-            matrix[b][ clickedSquare.getColIndex() ].setCurrentState(Square.State.FALSE);
+        for(int b = 0; b < matrix[col].length; b++) {
+            matrix[b][ col ].setCurrentState(neighborState);
         }
+
+        clickedSquare.setCurrentState(clickedState);
 
         /* set clickedSquare to TRUE */
-        clickedSquare.setCurrentState(Square.State.TRUE);
-    }
-    private void changeSquareToEmpty(Square clickedSquare) {
-        /* set each square in clickedSquares row to EMPTY */
-        for(int a = 0; a < matrix.length; a++) {
-            matrix[ clickedSquare.getRowIndex() ][a].setCurrentState(Square.State.EMPTY);
+        if(clickedState == Square.State.TRUE) {
+            clickedSquare.setCurrentState(Square.State.TRUE);
+        } else {
+            clickedSquare.setCurrentState(Square.State.EMPTY);
         }
-
-        /* set each square in clickedSquares column to EMPTY */
-        for(int b = 0; b < matrix[clickedSquare.getColIndex()].length; b++) {
-            matrix[b][ clickedSquare.getColIndex() ].setCurrentState(Square.State.EMPTY);
-        }
-
-        /* set clickedSquare to EMPTY */
-        clickedSquare.setCurrentState(Square.State.EMPTY);
     }
 
     // __ ACCESSORS __
@@ -147,14 +141,13 @@ public class Block implements ActionListener {
         Square clicked = (Square)e.getSource();
         switch(clicked.getCurrentState()) {
             case EMPTY:
-                //clicked.setCurrentState(Square.State.FALSE);
-                clicked.nextState();
+                clicked.setCurrentState(Square.State.FALSE);
                 break;
-            case FALSE:
-                changeSquareToTrue(clicked);
+            case FALSE:/* change neighbor Squares to FALSE, current Square to TRUE */
+                changeSquareToOrFromTrue(clicked, Square.State.FALSE, Square.State.TRUE);
                 break;
-            case TRUE:
-                changeSquareToEmpty(clicked);
+            case TRUE: /* change neighbor Squares to EMPTY, current Square to Empty */
+                changeSquareToOrFromTrue(clicked, Square.State.EMPTY, Square.State.EMPTY);
                 break;
         }
     }
