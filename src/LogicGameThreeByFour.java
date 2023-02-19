@@ -40,6 +40,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     /* Tracks the total time a player spends on a puzzle */
     private long startTime;
     private long endTime;
+    /* Using the Hint feature penalizes the players total time */
     private long penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
@@ -59,7 +60,6 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     }
 
     // __ FUNCTIONS __
-
     /**
      * Initializes GUI using GameBoard object created from game file.
      * Retrieves the root frame to be displayed
