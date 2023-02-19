@@ -5,10 +5,6 @@
  * 2/19 [chris] - infoPanel and controlPanel completed
  */
 
-/*
-* Construct and return the GUI for a logic game (3x4)
-*/
-
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -19,8 +15,11 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+/**
+ * Construct a Graphical interface for a 3x4 Logic Puzzle using GameBoard data structure.
+ */
 public class GUI implements ActionListener{
-    // FIELDS
+    // __ ATTRIBUTES __
     /* Reference to finished graphical interface */
     private JFrame rootFrame;
     /* initialized blocks array for creating game panels */
@@ -31,7 +30,7 @@ public class GUI implements ActionListener{
     private boolean wasOnNotes;
 
 
-    // CONSTRUCTOR
+    // __ CONSTRUCTORS __
     public GUI() {
         this.rootFrame = new JFrame(" Logic Puzzle Game ");
         this.wasOnNotes = false;
@@ -44,7 +43,7 @@ public class GUI implements ActionListener{
         createGUI();
     }
 
-    // METHODS
+    // __ FUNCTIONS __
     /**
      * Initialize all graphical components and construct the GUI
      * root frame will hold all child panels
@@ -316,7 +315,7 @@ public class GUI implements ActionListener{
         return rotatedImage;
     }
 
-    // ACCESSORS
+    // __ ACCESSORS __
     /**
      * Once GUI is created this method will return the finalized root frame
      * to the application.

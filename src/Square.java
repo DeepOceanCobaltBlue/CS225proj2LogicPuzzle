@@ -23,7 +23,7 @@ public class Square extends JButton {
     /* State is used to track the logical condition of the square */
     enum State {EMPTY, TRUE, FALSE}
 
-    // __ PRIVATE FIELDS __
+    // __ ATTRIBUTES __
     /* Row index value of square within parent 'Block' */
     private int rowIndex;
     /* Column index value of square within parent 'Block' */

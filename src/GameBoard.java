@@ -8,11 +8,10 @@
 
 import javax.swing.*;
 
-/** Data structure of Game data and assets
- * This class will be used by the PuzzleGame in order to properly build our Puzzle for the
- * user to play. This class contains arrays of clues and answers,
- * This class will store all of this information so the PuzzleGame class may instantiate a new,
- * fully furnished GameBoard for the user to use.
+/** Data structure for Logic Game assets
+ * Contains all the textual information necessary to present to the player. Also
+ * holds the Block objects that make up the game interface and the control
+ * function buttons handled in the LogicGame class.
  */
 public class GameBoard {
     // __ ATTRIBUTES __
@@ -27,13 +26,13 @@ public class GameBoard {
     /* Interactive game assets */
     private Block[][] blocks;
     /* Reference used to pass control buttons to GUI in order to display.
-     *  However, logic for controls are handled in the LogicGame class */
+     * However, logic for controls are handled in the LogicGame class */
     private JButton[] controls;
 
     // __ CONSTRUCTORS __
     public GameBoard() {
-        this.clues = new String[4];
-        this.answers = new String[3];
+        this.clues = null;
+        this.answers = null;
         this.story = null;
         this.blocks = null;
         this.notes = null;
@@ -69,7 +68,6 @@ public class GameBoard {
     public String getNotes() {
         return notes;
     }
-
     public void setNotes(String notes) {
         this.notes = notes;
     }

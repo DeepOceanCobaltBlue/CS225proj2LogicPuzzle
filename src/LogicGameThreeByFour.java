@@ -29,14 +29,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /** This class will manage top level functionality of the game.
- * Functions:
- * - create GUI and display to user
- * - initialize game assets
- * - handle control panel contents
- *   - Buttons, new game, loading game boards, file I/O
- * - handle win condition logic
- * - handle player feedback
- *   - hints, clues, etc.
+ * - Handle game file I/O
+ * - initialize game board
+ * - launch game window
+ * - handle control panel functions
+ *   - hints, submit answers [new game, loading game boards]
  */
 public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     // __ ATTRIBUTES __
