@@ -3,6 +3,7 @@
  *             - wrote class comment
  * 2/14 [chris] - worked on implementation of UML requirements and documentation
  * 2/18 [chris] - updated initialization constructor for title information and squares
+ * 2/19 [chris] - implemented cycling images for buttons
  */
 
 import javax.imageio.ImageIO;
