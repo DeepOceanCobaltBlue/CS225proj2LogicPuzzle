@@ -57,7 +57,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
         String filepath = importGameBoard();    // get filepath to Game file
         fileReader(filepath);                   // read file and initialize game board
         createButtons();                        // Initialize control function buttons and pass to game board
-        createGUI();                            // pass game board to GUI to initialize gui and get root Frame
+        createGUI();                            // pass game board to GUI to initialize gui
 
     }
 
@@ -244,9 +244,9 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
      * Handles necessary game logic relevant to the control functions used outside the
      * primary game area.
      *      Functions include:
-     *          New Game:
+     *          Give Hint:
      *          Submit Answers:
-     * @param e
+     * @param e - control button clicked
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -283,9 +283,5 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
 
     public long getPenaltyTime() {
         return penaltyTime;
-    }
-
-    public JButton[] getFunctionButtons() {
-        return functionButtons;
     }
 }

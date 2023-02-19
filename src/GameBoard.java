@@ -2,7 +2,7 @@
  * 2/16 [Andrew]- created class
  *              - wrote class comment
  *              - wrote version 1.0 of the class and added documentation
- * 2/18 [chris] - removed filepath from gameboard and added a parameterized constructor
+ * 2/18 [chris] - removed filepath from game board and added a parameterized constructor
  *              - updated class comment to reflect change, updated comments
  */
 

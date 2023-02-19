@@ -4,7 +4,7 @@
  * 2/14 [chris] - worked on implementation of UML requirements and documentation
  * 2/18 [chris] - updated initialization constructor for title information and squares
  * 2/19 [chris] - implemented cycling images for buttons
- *
+ *              - updated documentation to reflect changes
  * 2/19 [phoenix] - moved code from findIncorrectBlocks() from LogicGame to here
  */
 
@@ -15,12 +15,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-/** This class represents a 4x4 matrix of 'Squares' and handles interactions
+/**
+ * This class represents a 4x4 matrix of 'Squares' and handles interactions
  * between the user and any square within the matrix.
- *
  */
 public class Block implements ActionListener {
-    // __ PRIVATE FIELDS __
+    // __ ATTRIBUTES __
     /* matrix of Square objects controlled by this block */
     private Square[][] matrix;
     /* Subject title for row titles */
@@ -32,9 +32,9 @@ public class Block implements ActionListener {
     /* Subject title for each column */
     private String[] columnTitles;
 
+    /* images displayed on individual Squares to display currentState */
+    /* [0] = FALSE, [1] = TRUE */
     private static Image[] images;
-    private static Image imgFalse;
-    private static Image imgTrue;
 
     // __ CONSTRUCTORS __
     public Block() {
@@ -52,37 +52,42 @@ public class Block implements ActionListener {
         this.rowTitles = rowTitles;
         this.columnTitles = columnTitles;
 
-        /* Index is the column, value is the row, containing TRUE square */
+        /* translate text array into int array */
         String[] tempTrueRows = order.split(",");
         int[] TrueRows = new int[4];
         for(int i = 0; i < 4; i++) {
+            // (-1) translates to indexing value. Row 4 is index value [3]
             TrueRows[i] = (Integer.parseInt(tempTrueRows[i]) - 1);
         }
         initSquares(TrueRows);
     }
 
     // __ FUNCTIONS __
-
-
+    /**
+     * reads Image files from directory to be used by Squares to indicate their
+     * currentState as visual feedback to the player.
+     */
     private void loadImages() {
+        Image imgFalse;
+        Image imgTrue;
         try {
-            String imageFilePath = "Square Images";
-
             imgFalse = ImageIO.read(new File("Square Images\\X.png"));
             imgTrue = ImageIO.read(new File( "Square Images\\Circle.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        images = new Image[] { imgFalse, imgTrue };
+        images = new Image[] {imgFalse, imgTrue};
     }
 
     /**
-     * Initializes all Square objects in Block matrix[][] to their CorrectStates and index positions
-     * @param TrueRows
+     * Initializes all Square objects in Block matrix[][] to their CorrectStates and index positions.
+     * @param TrueRows - contains which squares in Block matrix are to be set to true. The Index of
+     *                 the array is the column index of the TRUE Square and the value stored at that
+     *                 index is the row index of the TRUE Square.
      */
     private void initSquares(int[] TrueRows) {
         loadImages();
-        /* Index is the column, value is the row, containing TRUE square */
+
         /* Iterate through all Squares in Block */
         for(int row = 0; row < matrix.length; row++) {
 
@@ -100,30 +105,33 @@ public class Block implements ActionListener {
         }
     }
 
+    /**
+     * Handles alterations to neighboring squares (full row and full column surrounding 'clickedSquare').
+     * @param clickedSquare - which Square is the focus
+     * @param neighborState - what state to change neighboring Squares to
+     * @param clickedState - what state to set clickedSquare to
+     */
     private void changeSquareToOrFromTrue(Square clickedSquare, Square.State neighborState, Square.State clickedState) {
         int row = clickedSquare.getRowIndex();
         int col = clickedSquare.getColIndex();
+
         /* set each square in clickedSquares row to FALSE */
         for(int a = 0; a < matrix.length; a++) {
             matrix[ row ][a].setCurrentState(neighborState);
         }
-
         /* set each square in clickedSquares column to FALSE */
         for(int b = 0; b < matrix[col].length; b++) {
             matrix[b][ col ].setCurrentState(neighborState);
         }
 
         clickedSquare.setCurrentState(clickedState);
-
-        /* set clickedSquare to TRUE */
-        if(clickedState == Square.State.TRUE) {
-            clickedSquare.setCurrentState(Square.State.TRUE);
-        } else {
-            clickedSquare.setCurrentState(Square.State.EMPTY);
-        }
     }
 
-    //
+    /**
+     *
+     * @param includeEmpty
+     * @return
+     */
     public boolean anyErrors(boolean includeEmpty) {
         boolean error = false;
 
@@ -152,13 +160,14 @@ public class Block implements ActionListener {
     /** This method handles interactions between the user and any square within the
      * matrix. This is done by calling specific methods based on the state of the square
      * clicked by the user.
-     * Only squares within the matrix have ActionEvents linked to them.
      *
      * @param e - 'Square' clicked
      */
     @Override
     public void actionPerformed(ActionEvent e) {
         Square clicked = (Square)e.getSource();
+
+        /* Set Square to next State in cycle and handle necessary changes to neighbor Squares */
         switch(clicked.getCurrentState()) {
             case EMPTY:
                 clicked.setCurrentState(Square.State.FALSE);
