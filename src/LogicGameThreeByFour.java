@@ -19,7 +19,6 @@
  */
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -45,8 +44,6 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     private long penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
-    /* Used to control the display of the GUI created from GameBoard */
-    private JFrame guiFrame;
 
     // __ CONSTRUCTORS __
     public LogicGameThreeByFour() {
@@ -70,8 +67,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
      */
     private void createGUI() {
         GUI gui = new GUI(super.getGameBoard());
-        super.setGui(gui);
-        this.guiFrame = super.getGui().getDisplay();
+        super.setFrame(gui.getDisplay());
     }
 
     /**
@@ -158,7 +154,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
      * Check if every Square of every Block has the correct state.
      * @return If correct state, return true, else return false.
      */
-    private boolean compareBoardToAnswer() {
+    /*private boolean compareBoardToAnswer() {
         // TODO: super.getGameBoard().getBlocks();
         // TODO: boolean boardCorrect = true;
         for (Block[] blRow : super.getGameBoard().getBlocks()) {
@@ -171,7 +167,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
             }
         }
         return false;
-    }
+    }*/
     /**
      * TEMP: Similar to compareBoardToAnswer.
      * @param includeEmpty Determines whether empty squares are included in the returned ArrayList
@@ -260,7 +256,7 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
         // TODO: This method should start the game by creating the window to display the GUI
 
         startTime = System.currentTimeMillis();
-        guiFrame.setVisible(true);
+        super.getFrame().setVisible(true);
         // constructor creates gui, now display it using this.guiFrame and display it
 
     }
@@ -287,15 +283,15 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
         switch (index) {
             case 0: // Submit Answer
                 endTime = System.currentTimeMillis();
-                /*if(compareBoardToAnswer()) {
-                    Tell user they were correct
+                if(findIncorrectBlocks(true).size() > 0) {
+                    // Tell user they were correct
                 }
                 else {
-                    Tell user they were incorrect
-                }*/
+                    // Tell user they were incorrect
+                }
                 break;
             case 1: // Hint
-                // giveHint();
+                giveHint();
                 break;
         }
     }
@@ -304,6 +300,14 @@ public class LogicGameThreeByFour extends PuzzleGame implements ActionListener {
     // __ ACCESSORS __
     public long getStartTime() {
         return startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public long getPenaltyTime() {
+        return penaltyTime;
     }
 
     public JButton[] getFunctionButtons() {
