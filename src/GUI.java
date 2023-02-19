@@ -8,30 +8,37 @@
 */
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class GUI {
+public class GUI implements ActionListener{
     // FIELDS
     /* Reference to finished graphical interface */
     private JFrame rootFrame;
     /* initialized blocks array for creating game panels */
     private Block[][] blocks;
-    /* Control buttons used to alter the state of the game */
-    private JButton[] functions;
     // TODO: add gameboard attribute, remove block[][] attribute
+    private GameBoard gameBoard;
+    /* Notes text area in info panel stores user generated text */
+    private boolean wasOnNotes;
+
 
     // CONSTRUCTOR
     public GUI() {
         this.rootFrame = new JFrame(" Logic Puzzle Game ");
+        this.wasOnNotes = false;
     }
 
     public GUI(GameBoard gb) {
         this();
+        this.gameBoard = gb;
         this.blocks = gb.getBlocks();
-        this.functions = gb.getControls();
         createGUI();
     }
 
@@ -48,17 +55,72 @@ public class GUI {
      *
      */
     private void createGUI() {
-        this.rootFrame.setLayout(new GridLayout(3, 3));
-        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.rootFrame.setMinimumSize(new Dimension(800, 600));
-        this.rootFrame.setResizable(false);
+        /* Houses the control function buttons for the player to interact with */
+        JPanel controlPanel = new JPanel(new BorderLayout());
+        controlPanel.setPreferredSize(new Dimension(100, 600));
+        controlPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,1,1,3)));
 
+        /* initialize controlPanel components */
+        /* compose controlPanel */
 
+        /* Used to display information to the player */
+        JPanel infoPanel = new JPanel(new BorderLayout());
+        infoPanel.setPreferredSize(new Dimension(250, 600));
+        infoPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,3,1,1)));
+        JPanel infoButtonPanel = new JPanel();
+        infoButtonPanel.setLayout(new BoxLayout(infoButtonPanel, BoxLayout.X_AXIS));
+        Font buttonFont = new Font("Arial", Font.BOLD, 10);
+
+        /* initialize infoPanel components */
+        JButton clueButton = new JButton("Clues");
+        clueButton.addActionListener(this);
+        clueButton.setPreferredSize(new Dimension(50, 35));
+        clueButton.setFont(buttonFont);
+
+        JButton storyButton = new JButton("Story");
+        storyButton.setBackground(new Color(150, 255, 255, 200));
+        storyButton.addActionListener(this);
+        storyButton.setPreferredSize(new Dimension(30, 35));
+        storyButton.setFont(buttonFont);
+
+        JButton notesButton = new JButton("Notes");
+        notesButton.addActionListener(this);
+        notesButton.setPreferredSize(new Dimension(30, 35));
+        notesButton.setFont(buttonFont);
+
+        /*
+        JButton answerButton = new JButton("Answer");
+        answerButton.addActionListener(this);
+        answerButton.setPreferredSize(new Dimension(30, 35));
+        answerButton.setFont(buttonFont);
+         */
+
+        JTextArea infoTextArea = new JTextArea();
+        infoTextArea.setPreferredSize(new Dimension((int)infoPanel.getPreferredSize().getWidth(), 300));
+        infoTextArea.setText(this.gameBoard.getStory());
+        infoTextArea.setLineWrap(true);
+        infoTextArea.setEditable(false);
+
+        /* compose infoPanel */
+        infoButtonPanel.add(clueButton, BorderLayout.NORTH);
+        infoButtonPanel.add(storyButton, BorderLayout.NORTH);
+        infoButtonPanel.add(notesButton, BorderLayout.NORTH);
+        //infoButtonPanel.add(answerButton, BorderLayout.NORTH);
+        infoPanel.add(infoButtonPanel, BorderLayout.NORTH);
+        infoPanel.add(infoTextArea, BorderLayout.CENTER);
+
+        /* Holds all components related to game Blocks used for play */
+        JPanel gamePanel = new JPanel();
+        gamePanel.setBorder(new LineBorder(Color.black));
+        gamePanel.setLayout(new GridLayout(3,3));
+        gamePanel.setPreferredSize(new Dimension(850, 600));
+
+        /* Initialize gamePanel components*/
         JPanel topLeftPanel  = new JPanel();                        /* BLANK */
         JPanel topMidPanel   = createTopTitlePanel(blocks[0][0]);   /* Title */
         JPanel topRightPanel = createTopTitlePanel(blocks[0][1]);   /* Title */
 
-        JPanel midLeftPanel  = createSideTitlePanel(blocks[1][0]);  /* Title */
+        JPanel midLeftPanel  = createSideTitlePanel(blocks[0][1]);  /* Title */
         JPanel midMidPanel   = createBlockPanel(blocks[0][0]);      /* Block */
         JPanel midRightPanel = createBlockPanel(blocks[0][1]);      /* Block */
 
@@ -66,22 +128,32 @@ public class GUI {
         JPanel botMidPanel   = createBlockPanel(blocks[1][0]);      /* Block */
         JPanel botRightPanel = new JPanel();                        /* BLANK */
 
-        /* compose root frame */
-        this.rootFrame.add(topLeftPanel );
-        this.rootFrame.add(topMidPanel  );
-        this.rootFrame.add(topRightPanel);
+        /* compose gamePanel */
+        gamePanel.add(topLeftPanel );
+        gamePanel.add(topMidPanel  );
+        gamePanel.add(topRightPanel);
 
-        this.rootFrame.add(midLeftPanel );
-        this.rootFrame.add(midMidPanel  );
-        this.rootFrame.add(midRightPanel);
+        gamePanel.add(midLeftPanel );
+        gamePanel.add(midMidPanel  );
+        gamePanel.add(midRightPanel);
 
-        this.rootFrame.add(botLeftPanel );
-        this.rootFrame.add(botMidPanel  );
-        this.rootFrame.add(botRightPanel);
+        gamePanel.add(botLeftPanel );
+        gamePanel.add(botMidPanel  );
+        gamePanel.add(botRightPanel);
 
-        for(Component panel : this.rootFrame.getComponents()) {
+        for(Component panel : gamePanel.getComponents()) {
             panel.setPreferredSize(new Dimension(120,120));
         }
+
+        // Frame settings
+        this.rootFrame.setLayout(new BorderLayout());
+        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.rootFrame.setMinimumSize(new Dimension(800, 480));
+
+        /* compose frame */
+        this.rootFrame.add(controlPanel, BorderLayout.WEST);
+        this.rootFrame.add(gamePanel, BorderLayout.CENTER);
+        this.rootFrame.add(infoPanel, BorderLayout.EAST);
     }
 
     /**
@@ -115,10 +187,11 @@ public class GUI {
         basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.X_AXIS));
 
         /* Subject Title */
-        JPanel subPanelOne = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel subPanelOne = new JPanel();
         subPanelOne.setBorder(new LineBorder(Color.BLACK));
+
         JLabel categoryLabel = new JLabel();
-        categoryLabel.setIcon(new ImageIcon(createRotatedImage(block.getBlockRowTitle())));
+        categoryLabel.setIcon(new ImageIcon(createRotatedImage(block.getBlockRowTitle(), 0, 10)));
         subPanelOne.add(categoryLabel);
         basePanel.add(subPanelOne);
 
@@ -131,11 +204,13 @@ public class GUI {
             JLabel label = new JLabel(title);
             label.setBorder(new LineBorder(Color.BLACK));
             label.setPreferredSize(new Dimension(80, 30));
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setVerticalAlignment(JLabel.CENTER);
 
             subPanelTwo.add(label);
         }
 
-        basePanel.add(subPanelTwo);
+        basePanel.add(subPanelTwo, BorderLayout.CENTER);
 
         return basePanel;
     }
@@ -146,13 +221,6 @@ public class GUI {
      * @return - completed display panel for this block
      */
     private JPanel createTopTitlePanel(Block block) {
-        /*
-        String[] temp = new String[] {"audi", "ford", "masarati12345678901234567890", "porsche"};
-        block.setBlockRowTitle("Cars");
-        block.setRowTitles(temp);
-        END REMOVE
-        */
-
         /* root panel */
         JPanel basePanel = new JPanel();
         basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.Y_AXIS));
@@ -171,11 +239,13 @@ public class GUI {
         for(int i = 0; i < 4; i++) {
             String title = titles[i];
             /* create image containing title string */
-            BufferedImage rotatedImage = createRotatedImage(title);
+            BufferedImage rotatedImage = createRotatedImage(title, 3, 18);
             /* create label to hold image */
             JLabel label = new JLabel();
             label.setBorder(new LineBorder(Color.BLACK));
             label.setPreferredSize(new Dimension(rotatedImage.getWidth(), rotatedImage.getHeight()));
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setVerticalAlignment(JLabel.CENTER);
             label.setIcon(new ImageIcon(rotatedImage));
 
             subPanelTwo.add(label);
@@ -193,7 +263,7 @@ public class GUI {
      * @param title - The Title that needs to be rotated
      * @return - Image containing the text rotated 90 degrees
      */
-    private BufferedImage createRotatedImage(String title) {
+    private BufferedImage createRotatedImage(String title, int xOffset, int yOffset) {
         int fontSize = 14;
         Font font = new Font("Arial", Font.BOLD, fontSize);
 
@@ -223,13 +293,15 @@ public class GUI {
         g2d = rotatedImage.createGraphics();
         g2d.setColor(Color.BLACK);
         g2d.setFont(font);
+        //g2d.fillRect(0, 0, rotatedImage.getWidth(), rotatedImage.getHeight());
+
 
         /* Rotate image 90 degrees counter clockwise */
         AffineTransform at = new AffineTransform();
         at.translate(0, 80);
         at.rotate(-Math.PI / 2); // (pi / 2) = 90 degrees, (-) indicates direction of rotation - CCW
         g2d.setTransform(at);
-        g2d.drawString(title, 3, 18);
+        g2d.drawString(title, xOffset, yOffset);
 
         g2d.dispose();
 
@@ -240,9 +312,53 @@ public class GUI {
     /**
      * Once GUI is created this method will return the finalized root frame
      * to the application.
-     * @return
+     * @return - the frame containing the all the graphical components for the application
      */
     public JFrame getDisplay() {
         return rootFrame;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        /* Get infoPanel components */
+        JButton clicked = (JButton)e.getSource();
+        JPanel infoBtnPanel = (JPanel) clicked.getParent();
+        JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
+        JTextArea ta = (JTextArea) infoPanel.getComponent(1);
+        /* clear 'selected' button color then set 'clicked to 'selected'*/
+        for(int i = 0; i < 3; i++ ) {
+            infoBtnPanel.getComponent(i).setBackground(null);
+        }
+        clicked.setBackground(new Color(150, 255, 255, 200));
+
+        if(wasOnNotes) {
+            gameBoard.setNotes(ta.getText());
+        }
+
+        /* Alter TextArea depending on button selected */
+        String text = "";
+        switch(clicked.getText()) {
+            case "Clues":
+                String[] clues = gameBoard.getClues();
+                for(int a = 0; a < clues.length; a++) {
+                    text = text.concat(clues[a] + "\n");
+                }
+                wasOnNotes = false;
+                ta.setEditable(false);
+                break;
+            case "Story":
+                text = gameBoard.getStory();
+                ta.setEditable(false);
+                wasOnNotes = false;
+                break;
+            case "Notes":
+                text = gameBoard.getNotes();
+                ta.setEditable(true);
+                wasOnNotes = true;
+                break;
+        }
+
+        ta.setText(text);
+
     }
 }

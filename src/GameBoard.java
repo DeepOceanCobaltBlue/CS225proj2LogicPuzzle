@@ -22,6 +22,8 @@ public class GameBoard {
     private String[] answers;
     /* Initial prompt to the player which will give context to the puzzle */
     private String story;
+    /* User saved notes used in game */
+    private String notes;
     /* Interactive game assets */
     private Block[][] blocks;
     /* Reference used to pass control buttons to GUI in order to display.
@@ -34,6 +36,7 @@ public class GameBoard {
         this.answers = new String[3];
         this.story = null;
         this.blocks = null;
+        this.notes = null;
     }
 
     public GameBoard(String[] clue, String[] answers, String story, Block[][] blocks) {
@@ -41,6 +44,7 @@ public class GameBoard {
         this.answers = answers;
         this.story = story;
         this.blocks = blocks;
+        this.notes = null;
     }
 
     // __ ACCESSORS __
@@ -61,5 +65,12 @@ public class GameBoard {
     }
     public JButton[] getControls() {
         return controls;
+    }
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
