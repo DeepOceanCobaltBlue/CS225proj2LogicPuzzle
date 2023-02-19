@@ -1,6 +1,6 @@
 /* Work Log
- * 2/4 [chris] - created class
- *             - wrote class comment
+ * 2/4 [chris]    - created class
+ *                - wrote class comment
  *
  * 2/16 [phoenix] - declared fields
  *                - created method templates

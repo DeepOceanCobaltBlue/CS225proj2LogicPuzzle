@@ -5,9 +5,12 @@
  * 2/18 [chris] - updated initialization constructor for title information and squares
  */
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /** This class represents a 4x4 matrix of 'Squares' and handles interactions
  * between the user and any square within the matrix.
@@ -25,6 +28,10 @@ public class Block implements ActionListener {
     private String[] rowTitles;
     /* Subject title for each column */
     private String[] columnTitles;
+
+    private static Image[] images;
+    private static Image imgFalse;
+    private static Image imgTrue;
 
     // __ CONSTRUCTORS __
     public Block() {
@@ -53,11 +60,25 @@ public class Block implements ActionListener {
 
     // __ FUNCTIONS __
 
+
+    private void loadImages() {
+        try {
+            String imageFilePath = "Square Images";
+
+            imgFalse = ImageIO.read(new File("Square Images\\X.png"));
+            imgTrue = ImageIO.read(new File( "Square Images\\Circle.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        images = new Image[] { imgFalse, imgTrue };
+    }
+
     /**
      * Initializes all Square objects in Block matrix[][] to their CorrectStates and index positions
      * @param TrueRows
      */
     private void initSquares(int[] TrueRows) {
+        loadImages();
         /* Index is the column, value is the row, containing TRUE square */
         /* Iterate through all Squares in Block */
         for(int row = 0; row < matrix.length; row++) {
@@ -70,6 +91,8 @@ public class Block implements ActionListener {
                     /* Initialize FALSE squares */
                     matrix[row][col] = new Square(row, col, Square.State.FALSE);
                 }
+                matrix[row][col].addActionListener(this);
+                matrix[row][col].setImages(images);
             }
         }
     }
@@ -124,7 +147,8 @@ public class Block implements ActionListener {
         Square clicked = (Square)e.getSource();
         switch(clicked.getCurrentState()) {
             case EMPTY:
-                clicked.setCurrentState(Square.State.FALSE);
+                //clicked.setCurrentState(Square.State.FALSE);
+                clicked.nextState();
                 break;
             case FALSE:
                 changeSquareToTrue(clicked);

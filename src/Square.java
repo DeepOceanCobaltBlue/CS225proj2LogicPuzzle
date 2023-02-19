@@ -4,9 +4,11 @@
  *              - wrote version 1.0 of the class and added documentation
  */
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /** This class represents an individual junction between two categories within the game.
  * every square has a position within a 4x4 matrix which is managed by the parent 'Block'.
@@ -32,6 +34,7 @@ public class Square extends JButton {
     private State currentState;
     /* The intended state in accordance with the imported game board */
     private State correctState;
+    private Image[] images;
 
     // __ CONSTRUCTORS __
     public Square() {
@@ -61,9 +64,10 @@ public class Square extends JButton {
 
     /** Change graphic displayed on this 'Square' to represent the
      * desired state.
-     * @param newState - determines character to display
+     * @param state - determines character to display
      */
-    private void setDisplay(State newState) {
+    private void setDisplay(State state) {
+        /*
         // retrieve rendered image
         Image displayImage = new BufferedImage(10, 10, 2); // 2 = ARGB
         Graphics2D g2d = (Graphics2D)displayImage.getGraphics();
@@ -85,6 +89,19 @@ public class Square extends JButton {
         // update
         this.setIcon(new ImageIcon(displayImage));
         this.repaint(); // TODO: test?? is this necessary
+
+         */
+        switch(state) {
+            case EMPTY:
+                this.setIcon(new ImageIcon());
+                break;
+            case FALSE:
+                this.setIcon(new ImageIcon(images[0]));
+                break;
+            case TRUE:
+                this.setIcon(new ImageIcon(images[1]));
+                break;
+        }
     }
 
     /** Change current state to the next state in the cycle.
@@ -102,6 +119,7 @@ public class Square extends JButton {
                 this.currentState = State.EMPTY;
                 break;
         }
+        setDisplay(this.currentState);
     }
 
     /** Used by parent 'Block' to assess if player has this 'Square' correctly set.
@@ -129,6 +147,9 @@ public class Square extends JButton {
         return colIndex;
     }
 
+    public void setImages(Image[] images) {
+        this.images = images;
+    }
 
     // __ OVERRIDES __
 

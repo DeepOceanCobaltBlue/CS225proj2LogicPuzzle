@@ -1,6 +1,8 @@
 /* Work Log
  * 2/14 [chris] - created class and implemented UML requirements and documentation
  * 2/16 [chris] - created and implemented title panel methods including createRotatedImage()
+ * 2/18 [chris] - GUI gamePanel completed
+ * 2/19 [chris] - infoPanel and controlPanel completed
  */
 
 /*
