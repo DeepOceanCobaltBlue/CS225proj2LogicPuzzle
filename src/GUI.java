@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.sql.Time;
 
 /**
  * Construct a Graphical interface for a 3x4 Logic Puzzle using GameBoard data structure.
@@ -28,6 +29,8 @@ public class GUI implements ActionListener{
     private GameBoard gameBoard;
     /* Notes text area in info panel stores user generated text */
     private boolean wasOnNotes;
+    /* Updated on 1 second intervals to display total time the player has been attempting current puzzle */
+    private JLabel timeValueLabel;
 
 
     // __ CONSTRUCTORS __
@@ -124,6 +127,11 @@ public class GUI implements ActionListener{
         infoTextArea.setLineWrap(true);
         infoTextArea.setEditable(false);
 
+        JPanel timerPanel = new JPanel(new GridLayout(1, 1));
+        timeValueLabel = new JLabel("Time: 0 Seconds");
+        timeValueLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timerPanel.add(timeValueLabel);
+
         /* compose infoPanel */
         infoButtonPanel.add(clueButton, BorderLayout.NORTH);
         infoButtonPanel.add(storyButton, BorderLayout.NORTH);
@@ -132,6 +140,7 @@ public class GUI implements ActionListener{
 
         infoPanel.add(infoButtonPanel, BorderLayout.NORTH);
         infoPanel.add(infoTextArea, BorderLayout.CENTER);
+        infoPanel.add(timerPanel, BorderLayout.SOUTH);
 
         /* Holds all components related to game Blocks used for play */
         JPanel gamePanel = new JPanel();
@@ -180,6 +189,10 @@ public class GUI implements ActionListener{
         this.rootFrame.add(controlPanel, BorderLayout.WEST);
         this.rootFrame.add(gamePanel, BorderLayout.CENTER);
         this.rootFrame.add(infoPanel, BorderLayout.EAST);
+    }
+
+    public void updateClock(String time) {
+        timeValueLabel.setText(time);
     }
 
     /**

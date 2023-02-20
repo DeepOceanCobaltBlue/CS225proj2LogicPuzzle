@@ -43,16 +43,22 @@ public class LogicGameThreeByFour implements ActionListener {
     /* Tracks the total time a player spends on a puzzle */
     private long startTime;
     private long endTime;
+    /* Tracks to total time the player has spent on the current game */
+    private Timer timer;
+    private boolean runClock;
     /* Using the Hint feature penalizes the players total time */
     private long penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
+
 
     // __ CONSTRUCTORS __
     public LogicGameThreeByFour() {
         this.startTime = 0;
         this.endTime = 0;
         this.penaltyTime = 0;
+        this.timer = new Timer(0, null);
+        this.runClock = false;
         this.functionButtons = new JButton[2];
 
         String filepath = importGameBoard();    // get filepath to Game file
@@ -65,6 +71,8 @@ public class LogicGameThreeByFour implements ActionListener {
         this.startTime = 0;
         this.endTime = 0;
         this.penaltyTime = 0;
+        this.timer = new Timer(0, null);
+        this.runClock = false;
         this.functionButtons = new JButton[2];
 
         fileReader(filepath);                   // read file and initialize game board
@@ -79,6 +87,24 @@ public class LogicGameThreeByFour implements ActionListener {
     private void createGUI() {
         this.setGUI(new GUI(this.getGameBoard()));
     }
+
+    private void clock() {
+        if(runClock) {
+            timer = new Timer(1000, e -> {
+                long timeSeconds = (int)((System.currentTimeMillis() - getStartTime())/1000);
+                String time = "Time: ";
+                time = time.concat(String.valueOf(timeSeconds));
+                time = time.concat(" Seconds");
+
+                gui.updateClock(time);
+            });
+
+            timer.start();
+        } else {
+            timer.stop();
+        }
+    }
+
 
     /**
      * Extract and initialize game assets from game file
@@ -237,6 +263,9 @@ public class LogicGameThreeByFour implements ActionListener {
 
     public void play() {
         startTime = System.currentTimeMillis();
+        // TODO: We can add a start button and have the gameboard initially disabled and clues hidden
+        runClock = true; // allow timer to begin
+        clock(); // start timer
         this.gui.getDisplay().setVisible(true);
     }
 
@@ -255,13 +284,11 @@ public class LogicGameThreeByFour implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton pressedButton = (JButton) e.getSource();
-        int index = 0;
-        while(!(functionButtons[index].equals(pressedButton))) {
-            index += 1;
-        }
-        switch (index) {
-            case 0: // Submit Answer
+        switch (pressedButton.getText()) {
+            case "Submit":
                 endTime = System.currentTimeMillis();
+                runClock = false; // do not allow timer to run
+                clock(); // stop timer
                 if(findIncorrectBlocks(true).size() > 0) {
                     // Tell user they were correct
                 }
@@ -269,7 +296,7 @@ public class LogicGameThreeByFour implements ActionListener {
                     // Tell user they were incorrect
                 }
                 break;
-            case 1: // Hint
+            case "Hint":
                 giveHint();
                 break;
         }
