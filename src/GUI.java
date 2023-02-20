@@ -3,6 +3,10 @@
  * 2/16 [chris] - created and implemented title panel methods including createRotatedImage()
  * 2/18 [chris] - GUI gamePanel completed
  * 2/19 [chris] - infoPanel and controlPanel completed
+ *              - added timer
+ * 2/20 [chris] - added menu
+ *              - added leaderboard
+ *              - added more game files( game2, game3, game4)
  */
 
 import javax.swing.*;
@@ -14,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.sql.Time;
 
 /**
  * Construct a Graphical interface for a 3x4 Logic Puzzle using GameBoard data structure.
@@ -32,21 +35,84 @@ public class GUI implements ActionListener{
     /* Updated on 1 second intervals to display total time the player has been attempting current puzzle */
     private JLabel timeValueLabel;
 
+    /* Reference used to pass control buttons to GUI in order to display.
+     * However, logic for controls are handled in the LogicGame class */
+    private JButton[] controls;
+    private JPanel menuRootPane;
+    private JPanel gameRootPane;
+    private JPanel gameCreationRootPane;
+
 
     // __ CONSTRUCTORS __
     public GUI() {
         this.rootFrame = new JFrame(" Logic Puzzle Game ");
+        // Frame settings
+        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.rootFrame.setMinimumSize(new Dimension(1000, 480));
+        this.rootFrame.setVisible(true);
+        this.gameBoard = null;
         this.wasOnNotes = false;
+        this.controls = null;
+
     }
 
-    public GUI(GameBoard gb) {
+    // TODO: walk through if this constructor was used, specifically looping importgame and menupanel
+    public GUI(JButton[] controls) {
         this();
-        this.gameBoard = gb;
-        this.blocks = gb.getBlocks();
-        createGUI();
+        this.controls = controls;
+    }
+
+    public void switchWindow(String name) {
+        switch(name) {
+            case "Creation":
+                this.rootFrame.setContentPane(this.gameCreationRootPane);
+                break;
+            case "Menu":
+                this.rootFrame.setContentPane(this.menuRootPane);
+                break;
+            case "Game":
+                this.rootFrame.setContentPane(this.gameRootPane);
+                break;
+        }
+        this.rootFrame.pack();
+        this.rootFrame.revalidate();
+        this.rootFrame.repaint();
+        this.rootFrame.setVisible(true);
     }
 
     // __ FUNCTIONS __
+    private void createMenuInterface() {
+        /* bottom layer of menu */
+        menuRootPane = new JPanel();
+        menuRootPane.setLayout(new BoxLayout(menuRootPane, BoxLayout.Y_AXIS));
+
+        /* Button panel for menu options */
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(0, 0, 20, 0);
+
+        /* initialize and compose menu panel components */
+        JButton newGameButton = this.controls[2];
+        newGameButton.setPreferredSize(new Dimension(350, 50));
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        menuPanel.add(newGameButton, constraints);
+
+        JButton leaderButton = this.controls[3];
+        leaderButton.setPreferredSize(new Dimension(350, 50));
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        menuPanel.add(leaderButton, constraints);
+
+        JButton createButton = this.controls[4];
+        createButton.setPreferredSize(new Dimension(350, 50));
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        menuPanel.add(createButton, constraints);
+
+        menuRootPane.add(menuPanel);
+    }
     /**
      * Initialize all graphical components and construct the GUI
      * root frame will hold all child panels
@@ -58,17 +124,19 @@ public class GUI implements ActionListener{
      *  Panels labeled as Row x Col => TopLeftPanel (is the blank panel in the top left corner)
      *
      */
-    private void createGUI() {
+    private void createGameInterface() {
+        gameRootPane = new JPanel(new BorderLayout());
+
         /* Houses the control function buttons for the player to interact with */
         JPanel controlPanel = new JPanel(new BorderLayout());
-        controlPanel.setPreferredSize(new Dimension(200, 600));
+        controlPanel.setPreferredSize(new Dimension(200, 480));
         controlPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,1,1,3)));
 
         /* initialize controlPanel components */
-        JButton hintButton = gameBoard.getControls()[0];
+        JButton hintButton = this.controls[0];
         hintButton.setText("Get Hint");
 
-        JButton submitButton = gameBoard.getControls()[1];
+        JButton submitButton = this.controls[1];
         submitButton.setText("Submit");
 
         JTextArea feedbackTextArea = new JTextArea();
@@ -90,7 +158,7 @@ public class GUI implements ActionListener{
 
         /* Used to display information to the player */
         JPanel infoPanel = new JPanel(new BorderLayout());
-        infoPanel.setPreferredSize(new Dimension(250, 600));
+        infoPanel.setPreferredSize(new Dimension(250, 480));
         infoPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,3,1,1)));
 
         JPanel infoButtonPanel = new JPanel();
@@ -180,19 +248,147 @@ public class GUI implements ActionListener{
         /* Initialize infoTextArea text by simulating clicking the "Clues" button */
         clueButton.doClick();
 
-        // Frame settings
-        this.rootFrame.setLayout(new BorderLayout());
-        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.rootFrame.setMinimumSize(new Dimension(900, 480));
+        /* compose interface for game */
+        gameRootPane.add(controlPanel, BorderLayout.WEST);
+        gameRootPane.add(gamePanel, BorderLayout.CENTER);
+        gameRootPane.add(infoPanel, BorderLayout.EAST);
+    }
+    private void createGameCreationInterface() {
+        gameCreationRootPane = new JPanel(new BorderLayout());
 
-        /* compose frame */
-        this.rootFrame.add(controlPanel, BorderLayout.WEST);
-        this.rootFrame.add(gamePanel, BorderLayout.CENTER);
-        this.rootFrame.add(infoPanel, BorderLayout.EAST);
+        /* initialize and compose button panel components */
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBorder(new LineBorder(Color.CYAN));
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setPreferredSize(new Dimension(100, 30));
+        cancelButton.addActionListener(this);
+        JButton createButton = new JButton("Create");
+        createButton.setPreferredSize(new Dimension(100, 30));
+        createButton.addActionListener(this);
+        buttonPanel.add(cancelButton, BorderLayout.WEST);
+        buttonPanel.add(createButton, BorderLayout.EAST);
+
+        /* initialize and compose input panel components */
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(2,2));
+        inputPanel.setBorder(new LineBorder(Color.BLACK));
+
+        /* Subject and row input components*/
+        JPanel subjectPanel = new JPanel();
+        subjectPanel.setLayout(new BoxLayout(subjectPanel, BoxLayout.Y_AXIS));
+        subjectPanel.setBorder(new LineBorder(Color.GREEN));
+
+        // panel to hold title
+        JPanel titlePanel1 = new JPanel();
+        titlePanel1.setBorder(new LineBorder(Color.BLACK));
+        JLabel label1 = new JLabel("Title headers and sub-categories");
+        titlePanel1.add(label1);
+        subjectPanel.add(titlePanel1);
+        // panel to hold labels
+        JPanel subjectLabelPanel = new JPanel(new GridLayout(1,3));
+        JLabel subjectLabel1 = new JLabel("Category 1  ");
+        JLabel subjectLabel2 = new JLabel("Category 2  ");
+        JLabel subjectLabel3 = new JLabel("Category 3");
+        subjectLabelPanel.add(subjectLabel1);
+        subjectLabelPanel.add(subjectLabel2);
+        subjectLabelPanel.add(subjectLabel3);
+        subjectPanel.add(subjectLabelPanel);
+
+        // panel to hold textareas
+        JPanel subjectTextPanel = new JPanel(new GridLayout(5,3));
+        JTextArea[][] blockTitles = new JTextArea[5][3];
+        for(int a = 0; a < blockTitles.length; a++) {
+            for(int b = 0; b < blockTitles[a].length; b++) {
+                blockTitles[a][b] = new JTextArea();
+                blockTitles[a][b].setBorder(new LineBorder(Color.BLACK));
+                blockTitles[a][b].setPreferredSize(new Dimension(100, 25));
+                if(a == 0) {
+                    blockTitles[a][b].setText("Category Name");
+                } else {
+                    blockTitles[a][b].setText("Subset name " + a);
+                }
+                subjectTextPanel.add(blockTitles[a][b]);
+            }
+        }
+
+        subjectPanel.add(subjectTextPanel);
+
+        /* Answer input components */
+        JPanel answerPanel = new JPanel();
+        answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
+        answerPanel.setBorder(new LineBorder(Color.GREEN));
+
+        // panel to hold title
+        JPanel titlePanel2 = new JPanel();
+        titlePanel2.setBorder(new LineBorder(Color.BLACK));
+        JLabel title2 = new JLabel("Answer key");
+        titlePanel2.add(title2);
+        answerPanel.add(titlePanel2);
+        // panel to hold labels
+        JPanel answerLabelPanel = new JPanel(new GridLayout(1,3));
+        answerLabelPanel.setBorder(new LineBorder(Color.BLACK));
+        JLabel answerLabel1 = new JLabel(" Category 1  ");
+        JLabel answerLabel2 = new JLabel(" Category 2  ");
+        JLabel answerLabel3 = new JLabel(" Category 3");
+        answerLabelPanel.add(answerLabel1);
+        answerLabelPanel.add(answerLabel2);
+        answerLabelPanel.add(answerLabel3);
+        answerPanel.add(answerLabelPanel);
+
+        // panel to hold textareas
+        JPanel answerTextPanel = new JPanel(new GridLayout(5,3));
+        JTextArea[][] answerTitles = new JTextArea[4][3];
+        for(int a = 0; a < answerTitles.length; a++) {
+            for(int b = 0; b < answerTitles[a].length; b++) {
+                answerTitles[a][b] = new JTextArea();
+                answerTitles[a][b].setBorder(new LineBorder(Color.BLACK));
+                answerTitles[a][b].setPreferredSize(new Dimension(100, 25));
+                answerTextPanel.add(answerTitles[a][b]);
+            }
+        }
+
+        answerPanel.add(answerTextPanel);
+
+        /* Clue input components */
+        JPanel cluePanel = new JPanel();
+        cluePanel.setBorder(new LineBorder(Color.BLACK));
+        cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
+        JLabel clueLabel = new JLabel("Clues");
+        JTextArea clueInput = new JTextArea();
+        clueInput.setPreferredSize(new Dimension(300, 200));
+        cluePanel.add(clueLabel);
+        cluePanel.add(clueInput);
+        /* Story input components */
+        JPanel storyPanel = new JPanel();
+        storyPanel.setBorder(new LineBorder(Color.BLACK));
+        storyPanel.setLayout(new BoxLayout(storyPanel, BoxLayout.Y_AXIS));
+        JLabel storyLabel = new JLabel("Story");
+        JTextArea storyInput = new JTextArea();
+        storyInput.setPreferredSize(new Dimension(300, 200));
+        storyPanel.add(storyLabel);
+        storyPanel.add(storyInput);
+        /* Detail image */
+        JPanel imagePanel = new JPanel(new GridLayout(1,1));
+        JLabel imageDisplayLabel = new JLabel();
+        imagePanel.add(imageDisplayLabel);
+
+        inputPanel.add(subjectPanel);
+        inputPanel.add(imagePanel);
+        inputPanel.add(answerPanel);
+        inputPanel.add(cluePanel);
+        inputPanel.add(storyPanel);
+
+        gameCreationRootPane.add(buttonPanel, BorderLayout.NORTH);
+        gameCreationRootPane.add(inputPanel, BorderLayout.CENTER);
     }
 
     public void updateClock(String time) {
         timeValueLabel.setText(time);
+    }
+    public void start() {
+        createMenuInterface();
+        createGameCreationInterface();
+        switchWindow("Menu");
     }
 
     /**
@@ -356,30 +552,40 @@ public class GUI implements ActionListener{
     public JFrame getDisplay() {
         return rootFrame;
     }
+    // __ MUTATORS __
+    public void setGameBoard(GameBoard gameBoard) {
+        this.gameBoard = gameBoard;
+        this.blocks = gameBoard.getBlocks();
+        createGameInterface();
+    }
+    public void setControls(JButton[] functionButtons) {
+        this.controls = functionButtons;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         /* Get infoPanel components */
-        JButton clicked = (JButton)e.getSource();
+        JButton clicked = (JButton) e.getSource();
+        //if(clicked.getParent() == this.rootFrame.getContentPane().)
         JPanel infoBtnPanel = (JPanel) clicked.getParent();
         JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
         JTextArea ta = (JTextArea) infoPanel.getComponent(1);
         /* clear 'selected' button color then set 'clicked to 'selected'*/
-        for(int i = 0; i < 3; i++ ) {
+        for (int i = 0; i < 3; i++) {
             infoBtnPanel.getComponent(i).setBackground(null);
         }
         clicked.setBackground(new Color(150, 255, 255, 200));
 
-        if(wasOnNotes) {
+        if (wasOnNotes) {
             gameBoard.setNotes(ta.getText());
         }
 
         /* Alter TextArea depending on button selected */
         String text = "";
-        switch(clicked.getText()) {
+        switch (clicked.getText()) {
             case "Clues":
                 String[] clues = gameBoard.getClues();
-                for(int a = 0; a < clues.length; a++) {
+                for (int a = 0; a < clues.length; a++) {
                     text = text.concat(clues[a] + "\n");
                 }
                 wasOnNotes = false;
@@ -394,6 +600,12 @@ public class GUI implements ActionListener{
                 text = gameBoard.getNotes();
                 ta.setEditable(true);
                 wasOnNotes = true;
+                break;
+            case "Create":
+                // make the game file
+                break;
+            case "Cancel":
+                switchWindow("Menu");
                 break;
         }
 

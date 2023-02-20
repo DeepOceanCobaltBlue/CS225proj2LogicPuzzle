@@ -1,0 +1,29 @@
+BLOCKS
+Ages
+109 years,110 years,111 years,112 years
+Names
+Iris,Olivia,Victor,Yolanda
+2,1,4,3
+Ages
+109 years,110 years,111 years,112 years
+States
+Connecticut,Kansas,Louisiana,New Mexico
+3,4,1,2
+States
+Connecticut,Kansas,Louisiana,New Mexico
+Names
+Iris,Olivia,Victor,Yolanda
+4,3,2,1
+CLUES
+1. Yolanda is a native of Connecticut.
+2. The Louisiana native is 1 year younger than the New Mexico native.
+3. Olivia is either the Louisiana native or the person who is 111 years old.
+4. The four people are Victor, the person who is 111 years old, the New Mexico native and the centenarian who is 109 years old.
+STORY
+Help Jackie research her article on the oldest living people in America by matching each centenarian to their age, hometown and state.
+ANSWER
+109 years,Olivia,Louisiana
+110 years,Iris,New Mexico
+111 years,Yolanda,Connecticut
+112 years,Victor,Kansas
+END

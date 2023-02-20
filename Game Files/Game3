@@ -1,0 +1,30 @@
+BLOCKS
+Times
+21 minutes,22 minutes,23 minutes,24 minutes
+Runners
+Herman,Isaac,Jay,Ralph
+1,2,3,4
+Times
+21 minutes,22 minutes,23 minutes,24 minutes
+Shirt Colors
+Maroon,Orange,Pink,White
+1,2,3,4
+Shirt Colors
+Maroon,Orange,Pink,White
+Runners
+Herman,Isaac,Jay,Ralph
+1,2,3,4
+CLUES
+1. The runner in the orange shirt finished 1 minute after Herman.
+2. Ralph, the competitor who finished in 23 minutes and the competitor who finished in 21 minutes were all different runners.
+3. The runner in the orange shirt finished 1 minute before the contestant in the pink shirt.
+4. The runner in the orange shirt was either the competitor who finished in 21 minutes or Isaac.
+5. The runner in the pink shirt finished sometime before the competitor in the white shirt.
+STORY
+Valero's 5k Fun Run was held yesterday in the downtown district. Determine the shirt color and hometown of each of the top runners, and match each to their finishing time.
+ANSWER
+21 minutes,Herman,Maroon
+22 minutes,Isaac,Orange
+23 minutes,Jay,Pink
+24 minutes,Ralph,White
+END
