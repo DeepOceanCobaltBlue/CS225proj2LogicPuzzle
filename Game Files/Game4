@@ -1,0 +1,29 @@
+BLOCKS
+Prices
+$250,$325,$400,$475
+Items
+Diamond Ring,Gold Chain,Silver Coin,Wristwatch
+2,3,4,1
+Prices
+$250,$325,$400,$475
+Locations
+Addison Beach,Burr Woods,Colbert Run,Front Beach
+2,3,4,1
+Locations
+Addison Beach,Burr Woods,Colbert Run,Front Beach
+Items
+Diamond Ring,Gold Chain,Silver Coin,Wristwatch
+1,2,3,4
+CLUES
+1. The gold chain was found at Burr Woods.
+2. The silver coin sold for $475.
+3. The piece found at Front Beach sold for 150 dollars less than the gold chain.
+4. The diamond ring was either the object found at Addison Beach or the object that sold for $475.
+STORY
+Velma goes all over Pinellas County with her metal detector, always on the lookout for her next bit of "buried treasure"! In fact, she's found a number of very valuable items over the past few decades. Using only the clues below, match each of her most valuable finds to the location where she unearthed it, and determine how much money she sold it for at the local pawn shop, and the year in which it was found.
+ANSWER
+$250,Wristwatch,Front Beach
+$325,Diamond Ring,Addison Beach
+$400,Gold Chain,Burr Woods
+$475,Silver Coin,Colbert Run
+END

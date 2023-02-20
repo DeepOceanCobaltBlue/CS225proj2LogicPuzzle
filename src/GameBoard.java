@@ -26,9 +26,6 @@ public class GameBoard {
     private String notes;
     /* Interactive game assets */
     private Block[][] blocks;
-    /* Reference used to pass control buttons to GUI in order to display.
-     * However, logic for controls are handled in the LogicGame class */
-    private JButton[] controls;
 
     // __ CONSTRUCTORS __
     public GameBoard() {
@@ -79,16 +76,9 @@ public class GameBoard {
     public Block[][] getBlocks() {
         return blocks;
     }
-    public void setControls(JButton[] controls) {
-        this.controls = controls;
-    }
-    public JButton[] getControls() {
-        return controls;
-    }
     public String getNotes() {
         return notes;
     }
-
     public void setNotes(String notes) {
         this.notes = notes;
     }
