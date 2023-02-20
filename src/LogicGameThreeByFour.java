@@ -19,6 +19,9 @@
  *
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  *                - moved functionality from abstract class
+ *
+ * 2/20 [phoenix] - switched to using Timer everything time related
+ *
  */
 
 import javax.swing.*;
@@ -41,21 +44,18 @@ public class LogicGameThreeByFour implements ActionListener {
     private GUI gui;
     private GameBoard gameBoard;
     /* Tracks the total time a player spends on a puzzle */
-    private long startTime;
-    private long endTime;
-    /* Tracks to total time the player has spent on the current game */
+    private int currentTime;
     private Timer timer;
     private boolean runClock;
     /* Using the Hint feature penalizes the players total time */
-    private long penaltyTime;
+    private int penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
 
 
     // __ CONSTRUCTORS __
     public LogicGameThreeByFour() {
-        this.startTime = 0;
-        this.endTime = 0;
+        this.currentTime = 0;
         this.penaltyTime = 0;
         this.timer = new Timer(0, null);
         this.runClock = false;
@@ -68,8 +68,7 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     public LogicGameThreeByFour(String filepath) {
-        this.startTime = 0;
-        this.endTime = 0;
+        this.currentTime = 0;
         this.penaltyTime = 0;
         this.timer = new Timer(0, null);
         this.runClock = false;
@@ -91,9 +90,9 @@ public class LogicGameThreeByFour implements ActionListener {
     private void clock() {
         if(runClock) {
             timer = new Timer(1000, e -> {
-                long timeSeconds = (int)((System.currentTimeMillis() - getStartTime())/1000);
+                this.currentTime += 1;
                 String time = "Time: ";
-                time = time.concat(String.valueOf(timeSeconds));
+                time = time.concat(String.valueOf(this.currentTime));
                 time = time.concat(" Seconds");
 
                 gui.updateClock(time);
@@ -234,10 +233,6 @@ public class LogicGameThreeByFour implements ActionListener {
      */
     private void giveHint() {
         ArrayList<Block> incBlock;
-        /* TODO: implement
-           - cycle through Square to find a TRUE square that is EMPTY or FALSE
-           - set the first Square found to TRUE
-        */
         incBlock = findIncorrectBlocks(false);
         if (incBlock.size() > 0) {
             // TODO: currentBlock.displayError();
@@ -257,7 +252,7 @@ public class LogicGameThreeByFour implements ActionListener {
      * Initialize the buttons for the control functions of the game and pass it to the GameBoard
      */
     private void createButtons() {
-        functionButtons[0] = new JButton("Submit Answers");
+        functionButtons[0] = new JButton("Start");
         functionButtons[0].addActionListener(this);
         functionButtons[1] = new JButton("Hint");
         functionButtons[1].addActionListener(this);
@@ -265,7 +260,6 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     public void play() {
-        startTime = System.currentTimeMillis();
         // TODO: We can add a start button and have the gameboard initially disabled and clues hidden
         runClock = true; // allow timer to begin
         clock(); // start timer
@@ -288,8 +282,10 @@ public class LogicGameThreeByFour implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JButton pressedButton = (JButton) e.getSource();
         switch (pressedButton.getText()) {
+            case "Start":
+                this.play();
+                pressedButton.setText("Submit");
             case "Submit":
-                endTime = System.currentTimeMillis();
                 runClock = false; // do not allow timer to run
                 clock(); // stop timer
                 if(findIncorrectBlocks(true).size() > 0) {
@@ -300,7 +296,7 @@ public class LogicGameThreeByFour implements ActionListener {
                 }
                 break;
             case "Hint":
-                giveHint();
+                this.giveHint();
                 break;
         }
     }
@@ -314,8 +310,12 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     // __ ACCESSORS __
-    public long getStartTime() {
-        return startTime;
+
+    public int getCurrentTime() {
+        return currentTime;
+    }
+    public long getPenaltyTime() {
+        return penaltyTime;
     }
     public GUI getGUI() {
         return gui;
@@ -323,10 +323,5 @@ public class LogicGameThreeByFour implements ActionListener {
     public GameBoard getGameBoard() {
         return gameBoard;
     }
-    public long getEndTime() {
-        return endTime;
-    }
-    public long getPenaltyTime() {
-        return penaltyTime;
-    }
+
 }
