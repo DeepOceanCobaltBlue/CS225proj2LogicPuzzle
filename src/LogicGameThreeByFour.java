@@ -18,7 +18,7 @@
  *                - changed giveHint behavior utilizing findIncorrectBlocks()
  *
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
- *                -
+ *                - moved functionality from abstract class
  */
 
 import javax.swing.*;
@@ -202,6 +202,9 @@ public class LogicGameThreeByFour implements ActionListener {
         }
         return incBlocks;
     }
+
+
+
     /**
      * TEMP: Similar to compareBoardToAnswer.
      * @param includeEmpty Determines whether empty Squares are included in the returned ArrayList
