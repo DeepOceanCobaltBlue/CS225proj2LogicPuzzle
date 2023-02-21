@@ -689,17 +689,10 @@ public class GUI implements ActionListener{
         }
 
         if(pw != null) {
-            String blockRowTitle;
-            String[] rowTitles;
-            String blockColTitle;
-            String[] columnTitles;
-            String story;
-            String[] clues;
-            String[] answer;
-
             JPanel inputComponents = (JPanel) this.gameCreationRootPane.getComponent(1); // input panel
 
             /* Component hierarchy
+            inputComponents
                 0 - subjectPanel
                     0 - titlePanel1
                     1 - subjectLabelPanel
@@ -723,25 +716,90 @@ public class GUI implements ActionListener{
                     0 - storyLabel
                     1 - storyInput
              */
+            /* Get Answer Information */
+            JPanel aPanel = (JPanel) inputComponents.getComponent(2);
+            JPanel taAnswerPanel = (JPanel) aPanel.getComponent(2);
+            String[] answerTextAreaInputs = new String[12];
+            for(int i = 0; i < answerTextAreaInputs.length; i++) {
+                answerTextAreaInputs[i] = ((JTextArea)taAnswerPanel.getComponent(i)).getText();
+            }
+            String[] trueRows = new String[4];
+            trueRows[0] = (answerTextAreaInputs[0] + "," + answerTextAreaInputs[1] + "," + answerTextAreaInputs[2]);
+            trueRows[1] = (answerTextAreaInputs[3] + "," + answerTextAreaInputs[4] + "," + answerTextAreaInputs[5]);
+            trueRows[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
+            trueRows[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
 
-            pw.write("BLOCKS");
-            // CAT 1 ROW TITLE
-            // CAT 1 ROW TITLES
-            // CAT 2 COL TITLE
-            // CAT 2 COL TITLES
+            /* get Blocks information */
+            JPanel sPanel = (JPanel) inputComponents.getComponent(0);
+            JPanel taSubjectPanel = (JPanel) sPanel.getComponent(2);
+            String[] subjectTextAreaInputs = new String[15];
+            for(int i = 0; i < subjectTextAreaInputs.length; i++) {
+                subjectTextAreaInputs[i] = ((JTextArea)taSubjectPanel.getComponent(i)).getText();
+            }
+            String blockRowTitle;
+            String rowTitlesStr;
+            String blockColTitle;
+            String colTitlesStr;
+
+            /* Block 1 */
+            blockRowTitle = subjectTextAreaInputs[0];   // CAT 1 subject TITLE
+            rowTitlesStr = ( subjectTextAreaInputs[3] + "," + // Cat 1 row titles
+                                    subjectTextAreaInputs[6] + "," +
+                                    subjectTextAreaInputs[9] + "," +
+                                    subjectTextAreaInputs[12]);
+
+            blockColTitle = subjectTextAreaInputs[1];   // CAT 2 subject TITLE
+            colTitlesStr = ( subjectTextAreaInputs[4] + "," + // Cat 1 col titles
+                                    subjectTextAreaInputs[7] + "," +
+                                    subjectTextAreaInputs[10] + "," +
+                                    subjectTextAreaInputs[13]);
             // BLOCK 1 TRUE ROW
+            pw.write("BLOCKS");
 
-            // CAT 1 ROW TITLE
-            // CAT 1 ROW TITLES
-            // CAT 3 COL TITLE
-            // CAT 3 COL TITLES
+            pw.write(blockRowTitle);
+            pw.write(rowTitlesStr);
+            pw.write(blockColTitle);
+            pw.write(colTitlesStr);
+            pw.write(trueRows[0]);
+
+            /* Block 2 */
+            blockRowTitle = subjectTextAreaInputs[0];// CAT 1 ROW TITLE
+            rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
+                                subjectTextAreaInputs[6] + "," +
+                                subjectTextAreaInputs[9] + "," +
+                                subjectTextAreaInputs[12]);
+
+            blockColTitle = subjectTextAreaInputs[2];// CAT 3 COL TITLE
+            colTitlesStr = (    subjectTextAreaInputs[5] + "," + // Cat 3 col titles
+                                subjectTextAreaInputs[8] + "," +
+                                subjectTextAreaInputs[11] + "," +
+                                subjectTextAreaInputs[14]);
             // BLOCK 2 TRUE ROW
 
-            // CAT 3 ROW TITLE
-            // CAT 3 ROW TITLES
-            // CAT 2 COL TITLE
-            // CAT 2 COL TITLES
+            pw.write(blockRowTitle);
+            pw.write(rowTitlesStr);
+            pw.write(blockColTitle);
+            pw.write(colTitlesStr);
+            pw.write(trueRows[1]);
+
+            /* Block 3 */
+            blockRowTitle = subjectTextAreaInputs[2];// CAT 3 ROW TITLE
+            rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
+                                subjectTextAreaInputs[6] + "," +
+                                subjectTextAreaInputs[9] + "," +
+                                subjectTextAreaInputs[12]);
+
+            blockColTitle = subjectTextAreaInputs[1];// CAT 2 COL TITLE
+            colTitlesStr = (    subjectTextAreaInputs[4] + "," + // Cat 1 col titles
+                                subjectTextAreaInputs[7] + "," +
+                                subjectTextAreaInputs[10] + "," +
+                                subjectTextAreaInputs[13]);
             // BLOCK 3 TURE ROWS
+            pw.write(blockRowTitle);
+            pw.write(rowTitlesStr);
+            pw.write(blockColTitle);
+            pw.write(colTitlesStr);
+            pw.write(trueRows[2]);
 
             pw.write("CLUES");
             // DELINEATE CLUES BY NEW LINES
