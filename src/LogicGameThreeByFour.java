@@ -91,7 +91,7 @@ public class LogicGameThreeByFour implements ActionListener {
      * Extract and initialize game assets from game file
      * @param inputFile - the game file text document to read
      */
-    private void fileReader(File inputFile) throws FileNotFoundException, NullPointerException{
+    private void fileReader(File inputFile) throws FileNotFoundException, NullPointerException, RuntimeException {
         Scanner reader = null;
         try {
             reader = new Scanner(inputFile);
@@ -101,7 +101,6 @@ public class LogicGameThreeByFour implements ActionListener {
             String[] answer = null;
             /* Read in all text from Game File to initialize block objects and gameBoard */
             while(reader.hasNext()) {
-
                 String inputLine = reader.nextLine();
                 switch(inputLine) {
                     case "BLOCKS":
@@ -122,6 +121,7 @@ public class LogicGameThreeByFour implements ActionListener {
                                 case 2:
                                     blocks[1][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
                                     break;
+
                             }
                         }
 
@@ -148,6 +148,8 @@ public class LogicGameThreeByFour implements ActionListener {
                         }
                         answer = allAnswers.split(",");
                         break;
+                    default:
+                        throw new FileFormatException();
                 }
             }
 
@@ -267,9 +269,10 @@ public class LogicGameThreeByFour implements ActionListener {
                     clock(); // start timer
                 } catch (NullPointerException exception) {
                     // User exited the dialog, no action required.
-                    //gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
                 } catch (FileNotFoundException exception) {
-                    //gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
+                    gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
+                } catch (RuntimeException exception) {
+                    gui.displayError("There was an error loading your file. Please ensure it has been formatted properly.");
                 }
                 break;
             case "Leaderboard":

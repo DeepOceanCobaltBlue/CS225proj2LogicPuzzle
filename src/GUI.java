@@ -47,6 +47,8 @@ public class GUI implements ActionListener{
     private JPanel gameRootPane;
     private JPanel gameCreationRootPane;
     private JTextArea feedbackTextArea;
+    private JTextArea errorTextArea;
+    private JDialog errorDialog;
 
 
     // __ CONSTRUCTORS __
@@ -101,6 +103,20 @@ public class GUI implements ActionListener{
         /* bottom layer of menu */
         menuRootPane = new JPanel();
         menuRootPane.setLayout(new BoxLayout(menuRootPane, BoxLayout.Y_AXIS));
+
+        FlowLayout errorLayout = new FlowLayout();
+        errorLayout.setVgap(25);
+        errorLayout.setHgap(50);
+        errorDialog = new JDialog(rootFrame, "Error", true);
+        errorDialog.setSize(400,200);
+        errorDialog.getContentPane().setLayout(errorLayout);
+        errorTextArea = new JTextArea();
+        errorTextArea.setEditable(false);
+        errorTextArea.setLineWrap(true);
+        errorTextArea.setWrapStyleWord(true);
+        errorTextArea.setFont(new Font("Arial", Font.BOLD, 16));
+        errorTextArea.setSize(300, 200);
+        errorDialog.getContentPane().add(errorTextArea);
 
         /* Button panel for menu options */
         JPanel menuPanel = new JPanel();
@@ -585,6 +601,11 @@ public class GUI implements ActionListener{
         g2d.dispose();
 
         return rotatedImage;
+    }
+
+    public void displayError(String errorMessage) {
+        errorTextArea.setText(errorMessage);
+        errorDialog.setVisible(true);
     }
 
     // __ ACCESSORS __

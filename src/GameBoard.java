@@ -7,6 +7,7 @@
  * 2/20 [Andrew] -Updated class organization
  *               -added more documentation (comments)
  * 2/21 [phoenix] - created hint related methods
+ *                - added comments for hint related methods
  */
 
 import javax.swing.*;
