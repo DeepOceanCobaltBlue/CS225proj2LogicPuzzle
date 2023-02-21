@@ -10,6 +10,7 @@
  * 2/21 [Andrew] - Updated class with more methods to display user errors and the proper graphic to match
  *
  * 2/21 [phoenix] - edited hint related methods
+ * 2/21 [chris]   - added highlightedSquares reset functionality
  */
 
 import javax.imageio.ImageIO;
@@ -41,6 +42,7 @@ public class Block implements ActionListener {
     /* [0] = FALSE, [1] = TRUE */
     private static Image[] images;
     private boolean clickable;
+    private ArrayList<Square> highlightedSquares;
 
     // __ CONSTRUCTORS __
     public Block() { // default constructor
@@ -50,6 +52,7 @@ public class Block implements ActionListener {
         rowTitles = new String[4];
         columnTitles = new String[4];
         clickable = true;
+        this.highlightedSquares = null;
     }
 
     /**
@@ -66,6 +69,7 @@ public class Block implements ActionListener {
         this.blockColTitle = columnTitle;
         this.rowTitles = rowTitles;
         this.columnTitles = columnTitles;
+        this.highlightedSquares = new ArrayList<>();
 
         /* translate text array into int array */
         String[] tempTrueRows = order.split(",");
@@ -183,11 +187,14 @@ public class Block implements ActionListener {
 
     }
 
+
+
     public void displayErrors(boolean includeEmpty){ // Finds all incorrect squares and displays their error background (Red)
         for (Square[] sqRow : this.matrix){
             for (Square square : sqRow){
                 if(!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)){
-                    square.setBackground(Color.RED);
+                    square.setBackground(new Color(200, 50, 50));
+                    this.highlightedSquares.add(square);
                 }
             }
         }
@@ -222,7 +229,13 @@ public class Block implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (clickable) {
-            Square clicked = (Square) e.getSource();
+            Square clicked = (Square)e.getSource();
+            if(!(this.highlightedSquares.isEmpty())) {
+                for(Square square : this.highlightedSquares) {
+                    square.setBackground(null);
+                }
+                this.highlightedSquares.clear();
+            }
 
             /* Set Square to next State in cycle and handle necessary changes to neighbor Squares */
             switch (clicked.getCurrentState()) {
