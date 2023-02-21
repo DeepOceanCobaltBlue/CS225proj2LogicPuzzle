@@ -587,31 +587,31 @@ public class GUI implements ActionListener{
         this.controls = functionButtons;
     }
 
+    private JTextArea getInfoPanel(JButton button) {
+        /* Get infoPanel components */
+        JPanel infoBtnPanel = (JPanel) button.getParent();
+        JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
+        /* clear 'selected' button color then set 'clicked to 'selected'*/
+        for (int i = 0; i < 3; i++) {
+            infoBtnPanel.getComponent(i).setBackground(null);
+        }
+        button.setBackground(new Color(150, 255, 255, 200));
+        return (JTextArea) infoPanel.getComponent(1);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
-        JTextArea ta = new JTextArea();
+        JTextArea ta;
         String text = "";
-
-        // if clicked is from the game window
-        if(clicked.isAncestorOf(this.gameRootPane)) {
-            /* Get infoPanel components */
-            JPanel infoBtnPanel = (JPanel) clicked.getParent();
-            JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
-            ta = (JTextArea) infoPanel.getComponent(1);
-            /* clear 'selected' button color then set 'clicked to 'selected'*/
-            for (int i = 0; i < 3; i++) {
-                infoBtnPanel.getComponent(i).setBackground(null);
-            }
-            clicked.setBackground(new Color(150, 255, 255, 200));
-
-            if (wasOnNotes) {
-                gameBoard.setNotes(ta.getText());
-            }
-        }
 
         switch (clicked.getText()) {
             case "Clues":
+                ta = getInfoPanel(clicked);
+                if (wasOnNotes) {
+                    gameBoard.setNotes(ta.getText());
+                }
+
                 String[] clues = gameBoard.getClues();
                 for (int a = 0; a < clues.length; a++) {
                     text = text.concat(clues[a] + "\n");
@@ -621,12 +621,19 @@ public class GUI implements ActionListener{
                 ta.setText(text);
                 break;
             case "Story":
+                ta = getInfoPanel(clicked);
+                if (wasOnNotes) {
+                    gameBoard.setNotes(ta.getText());
+                }
+
                 text = gameBoard.getStory();
                 ta.setEditable(false);
                 wasOnNotes = false;
                 ta.setText(text);
                 break;
             case "Notes":
+                ta = getInfoPanel(clicked);
+
                 text = gameBoard.getNotes();
                 ta.setEditable(true);
                 wasOnNotes = true;
