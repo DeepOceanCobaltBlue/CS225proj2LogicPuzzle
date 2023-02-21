@@ -65,11 +65,11 @@ public class GameBoard {
     }
 
     // GameBoard is our Block handler and should have to be used whenever LogicGame needs Block access.
-    public ArrayList<Integer> getErrorIndices(boolean includeEmpty) {
+    //public ArrayList<Integer> getErrorIndices(boolean includeEmpty) {
         //for () {
 
-        }
-    }
+     //   }
+    //}
     // TODO: Allow GiveHint to give the appropriate hint if squares are incorrect/empty.
 
     // __ ACCESSORS __
