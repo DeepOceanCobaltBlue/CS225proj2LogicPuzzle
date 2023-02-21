@@ -191,7 +191,7 @@ public class Block implements ActionListener {
         for (Square[] sqRow : this.matrix){
             for (Square square : sqRow){
                 if(!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)){
-                    square.setBackground(Color.RED);
+                    square.setBackground(new Color(200, 50, 50));
                     this.highlightedSquares.add(square);
                 }
             }
