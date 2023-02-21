@@ -7,6 +7,8 @@
  *              - updated documentation to reflect changes
  * 2/19 [phoenix] - moved code from findIncorrectBlocks() from LogicGame to here
  * 2/20 [Andrew] - Updated class with comments for each method provided
+ *
+ * 2/21 [phoenix] - edited hint related methods
  */
 
 import javax.imageio.ImageIO;
@@ -15,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class represents a 4x4 matrix of 'Squares' and handles interactions
@@ -148,9 +151,6 @@ public class Block implements ActionListener {
             for (Square square : sqRow) {
                 // If the state of any Square is incorrect => error will be set to true and stay that way.
                 error = error || (!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty));
-                // if(error) { // do this to escape the loop
-                //     return error;
-                // }
             }
         }
         return error;
@@ -158,21 +158,34 @@ public class Block implements ActionListener {
 
 
     public void setEmptyCorrect(){ // Finds the first empty Square on the GameBoard and sets it to its correct state.
+        ArrayList<Square> errSquares = new ArrayList<>();
+        Square chosenSquare;
+        int randIndex;
+
         for (Square[] sqRow : this.matrix){
             for (Square square : sqRow){
-                if (!square.isStateCorrect()){
-                    square.setCurrentState(Square.State.TRUE);
+                if (square.getCurrentState() == Square.State.EMPTY){
+                    errSquares.add(square);
                 }
             }
         }
+
+        randIndex = (int)(Math.random() * errSquares.size());
+        chosenSquare = errSquares.get(randIndex);
+        if (chosenSquare.getCorrectState() == Square.State.TRUE) {
+            changeSquareToOrFromTrue(chosenSquare, Square.State.FALSE, Square.State.TRUE);
+        } else {
+            chosenSquare.setCurrentState(chosenSquare.getCorrectState());
+        }
+
     }
 
 
     // TODO: displayErrors() Finds all incorrect squares and displays their error background(to be implemented).
-    public void displayErrors(){ // Finds all incorrect squares and displays their error background (Red)
+    public void displayErrors(boolean includeEmpty){ // Finds all incorrect squares and displays their error background (Red)
         for (Square[] sqRow : this.matrix){
             for (Square square : sqRow){
-                if(!square.isStateCorrect()){
+                if(!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)){
                     square.setBackground(Color.RED);
                 }
             }

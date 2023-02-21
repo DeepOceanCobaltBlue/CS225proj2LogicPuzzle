@@ -6,6 +6,7 @@
  *              - updated class comment to reflect change, updated comments
  * 2/20 [Andrew] -Updated class organization
  *               -added more documentation (comments)
+ * 2/21 [phoenix] - created hint related methods
  */
 
 import javax.swing.*;
@@ -49,28 +50,33 @@ public class GameBoard {
         this.notes = null;
     }
 
-    private ArrayList<Block> findIncorrectBlocks(boolean includeEmpty) {
-        ArrayList<Block> incBlocks = new ArrayList<Block>();
+    public ArrayList<Integer> getErrorBlockIndices(boolean includeEmpty) {
+        ArrayList<Integer> errorIndices = new ArrayList<Integer>();
 
-        for (Block[] blRow : blocks) {
-            for (Block block : blRow)
-                if (block != null) {
-                    if (block.anyErrors(includeEmpty)) {
-                        incBlocks.add(block);
-                    }
-                }
+        for (int i = 0; i < 3; i++) {
+            if (blocks[(i/2)%2][i%2].anyErrors(includeEmpty)) {
+                errorIndices.add(i);
             }
-
-        return incBlocks;
+        }
+        return errorIndices;
     }
 
-    // GameBoard is our Block handler and should have to be used whenever LogicGame needs Block access.
-    public ArrayList<Integer> getErrorIndices(boolean includeEmpty) {
-        //for () {
-
+    public void showAllErrors() {
+        for (int index = 0; index < 3; index++) {
+            blocks[(index/2)%2][index%2].displayErrors(true);
         }
     }
-    // TODO: Allow GiveHint to give the appropriate hint if squares are incorrect/empty.
+    public void showAllErrors(ArrayList<Integer> errorIndices) {
+        for (Integer index : errorIndices) {
+            blocks[(index/2)%2][index%2].displayErrors(false);
+        }
+    }
+
+
+    public void showSquareInBlock(ArrayList<Integer> errorIndices) {
+        int randIndex = (int)(Math.random() * errorIndices.size());
+        blocks[(errorIndices.get(randIndex)/2)%2][errorIndices.get(randIndex)%2].setEmptyCorrect();
+    }
 
     // __ ACCESSORS __
     public String[] getClues(){

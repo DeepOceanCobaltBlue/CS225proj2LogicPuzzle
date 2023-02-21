@@ -150,7 +150,7 @@ public class GUI implements ActionListener{
 
         /* initialize controlPanel components */
         JButton hintButton = this.controls[0];
-        hintButton.setText("Get Hint");
+        hintButton.setText("Hint");
 
         JButton submitButton = this.controls[1];
         submitButton.setText("Submit");

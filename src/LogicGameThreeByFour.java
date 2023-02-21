@@ -20,6 +20,7 @@
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  *                - moved functionality from abstract class
  * 2/20 [chris]   - refactored some methods to accommodate new code for new GUI items
+ * 2/21 [phoenix] - Finished hint system
  */
 
 import javax.swing.*;
@@ -177,70 +178,21 @@ public class LogicGameThreeByFour implements ActionListener {
      * Check if every Square of every Block has the correct state.
      * @return If correct state, return true, else return false.
      */
-    private ArrayList<Block> findIncorrectBlocks(boolean includeEmpty) {
-        ArrayList<Block> incBlocks = new ArrayList<Block>();
-        Block currentBlock;
-
-        for (int i = 0; i < 3; i++) {
-            currentBlock = this.getGameBoard().getBlocks()[(i / 2) % 2][i % 2];
-            if (currentBlock.anyErrors(includeEmpty)) {
-                incBlocks.add(currentBlock);
-            }
-        }
-        return incBlocks;
-    }
-
-    /**
-     * TEMP: Similar to compareBoardToAnswer.
-     * @param includeEmpty Determines whether empty Squares are included in the returned ArrayList
-     * @return Each Square with a State mismatch,  optionally includes Squares with State.Empty.
-     */
-    /*private ArrayList<Square> findIncorrectBlocks(boolean includeEmpty) {
-        ArrayList<Square> incSquares = new ArrayList<Square>();
-        for (Block[] row : this.getGameBoard().getBlocks()) {
-            for (Block block : row) {
-                if (block != null) {
-                    for (Square[] sqRow : block.getSquares()) {
-                        for (Square square : sqRow) {
-                            if (!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty)) {
-                                incSquares.add(square);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return incSquares;
-    }*/
-
 
     /**
      * Reveal an unrevealed or incorrect TRUE square
      */
     private void giveHint() {
-        /*ArrayList<Block> incBlock;
+        ArrayList<Integer> errBlockIndices = gameBoard.getErrorBlockIndices(false);
 
-        incBlock = findIncorrectBlocks(false);
-        if (incBlock.size() > 0) {
-            // TODO: currentBlock.displayError();
-            this.penaltyTime += 60;
+        if (errBlockIndices.size() > 0) {
+            gameBoard.showAllErrors(errBlockIndices);
         } else {
-            incBlock = findIncorrectBlocks(true);
-            if (incBlock.size() > 0) {
-                // TODO: currentBlock.setEmptyCorrect();
+            errBlockIndices = gameBoard.getErrorBlockIndices(true);
+            if (errBlockIndices.size() > 0) {
+                gameBoard.showSquareInBlock(errBlockIndices);
             } else {
-                // User Has perfect board
-            }
-        }*/
-        // ArrayList<Integer> errBlockIndices = gameboard.getErrorIndexes(false);
-        if (true/*errBlockIndices.size > 0*/) {
-            //gameBoard.showErrors(errBlockIndices);
-        } else {
-            // errBlockIndices = gameboard.getErrorIndexes(true);
-            if (true/*errBlockIndices.size > 0*/) {
-                // gameboard.showSquare(errBlockIndices);
-            } else {
-                // gui.setInfoText("Just Submit");
+                gui.setFeedbackTAText("Just Submit");
             }
         }
 
@@ -289,21 +241,18 @@ public class LogicGameThreeByFour implements ActionListener {
 
         switch (clicked.getText()) {
             case "Submit":
-                boolean win;
+                boolean win = gameBoard.getErrorBlockIndices(true).size() == 0;
                 runClock = false; // do not allow timer to run
                 clock(); // stop timer
-                if(findIncorrectBlocks(true).size() > 0) {
-                    win = true;
-                }
-                else {
-                    win = false;
-                }
-                /*gui.setInfoArea("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
-                        (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.
-                        \nYour total time is " + (currentTime+penaltyTime) : "There were " + findIncorrectBlocks(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");*/
+                gui.setFeedbackTAText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
+                        (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.\nYour total time is " +
+                                (currentTime+penaltyTime) + "." :
+                                "There were " + gameBoard.getErrorBlockIndices(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");
+                gameBoard.showAllErrors();
                 break;
             case "Hint":
                 giveHint();
+                penaltyTime += 60;
                 break;
             case "Start Game":
                 try {
