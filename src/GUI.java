@@ -56,12 +56,17 @@ public class GUI implements ActionListener{
 
     }
 
-    // TODO: walk through if this constructor was used, specifically looping importgame and menupanel
     public GUI(JButton[] controls) {
         this();
         this.controls = controls;
     }
 
+    /**
+     * Swaps the root panel displayed as the frame content pane to move between
+     * menu windows.
+     * @param name - Name of the window you want to swap to. Name is independent of
+     *             any object property.
+     */
     public void switchWindow(String name) {
         switch(name) {
             case "Creation":
@@ -81,6 +86,11 @@ public class GUI implements ActionListener{
     }
 
     // __ FUNCTIONS __
+
+    /**
+     * Constructs the graphical interface for the opening menu root panel.
+     * this panel is the first thing displayed upon launching the application.
+     */
     private void createMenuInterface() {
         /* bottom layer of menu */
         menuRootPane = new JPanel();
@@ -114,7 +124,7 @@ public class GUI implements ActionListener{
         menuRootPane.add(menuPanel);
     }
     /**
-     * Initialize all graphical components and construct the GUI
+     * Initialize all graphical components and construct the GUI of the game window
      * root frame will hold all child panels
      * root frame has 9 square child panels
      *          Left     Mid    Right
@@ -253,6 +263,12 @@ public class GUI implements ActionListener{
         gameRootPane.add(gamePanel, BorderLayout.CENTER);
         gameRootPane.add(infoPanel, BorderLayout.EAST);
     }
+
+    /**
+     * Constructs the graphical interface for the game file creation root
+     * panel. The panel is used if the player selects to create a new game
+     * file.
+     */
     private void createGameCreationInterface() {
         gameCreationRootPane = new JPanel(new BorderLayout());
 
@@ -382,9 +398,19 @@ public class GUI implements ActionListener{
         gameCreationRootPane.add(inputPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * sets the text parameter of the JLabel used to display the running
+     * time of the game.
+     * @param time
+     */
     public void updateClock(String time) {
         timeValueLabel.setText(time);
     }
+
+    /**
+     * creates the non-game board dependent windows and sets the Menu
+     * panel as the first window displayed.
+     */
     public void start() {
         createMenuInterface();
         createGameCreationInterface();
@@ -545,9 +571,8 @@ public class GUI implements ActionListener{
 
     // __ ACCESSORS __
     /**
-     * Once GUI is created this method will return the finalized root frame
-     * to the application.
-     * @return - the frame containing the all the graphical components for the application
+     * Once GUI is created this method will return the root frame to the application.
+     * @return - the frame containing the content pane that displays the application
      */
     public JFrame getDisplay() {
         return rootFrame;
@@ -564,24 +589,27 @@ public class GUI implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        /* Get infoPanel components */
         JButton clicked = (JButton) e.getSource();
-        //if(clicked.getParent() == this.rootFrame.getContentPane().)
-        JPanel infoBtnPanel = (JPanel) clicked.getParent();
-        JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
-        JTextArea ta = (JTextArea) infoPanel.getComponent(1);
-        /* clear 'selected' button color then set 'clicked to 'selected'*/
-        for (int i = 0; i < 3; i++) {
-            infoBtnPanel.getComponent(i).setBackground(null);
-        }
-        clicked.setBackground(new Color(150, 255, 255, 200));
-
-        if (wasOnNotes) {
-            gameBoard.setNotes(ta.getText());
-        }
-
-        /* Alter TextArea depending on button selected */
+        JTextArea ta = new JTextArea();
         String text = "";
+
+        // if clicked is from the game window
+        if(clicked.isAncestorOf(this.gameRootPane)) {
+            /* Get infoPanel components */
+            JPanel infoBtnPanel = (JPanel) clicked.getParent();
+            JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
+            ta = (JTextArea) infoPanel.getComponent(1);
+            /* clear 'selected' button color then set 'clicked to 'selected'*/
+            for (int i = 0; i < 3; i++) {
+                infoBtnPanel.getComponent(i).setBackground(null);
+            }
+            clicked.setBackground(new Color(150, 255, 255, 200));
+
+            if (wasOnNotes) {
+                gameBoard.setNotes(ta.getText());
+            }
+        }
+
         switch (clicked.getText()) {
             case "Clues":
                 String[] clues = gameBoard.getClues();
@@ -590,26 +618,27 @@ public class GUI implements ActionListener{
                 }
                 wasOnNotes = false;
                 ta.setEditable(false);
+                ta.setText(text);
                 break;
             case "Story":
                 text = gameBoard.getStory();
                 ta.setEditable(false);
                 wasOnNotes = false;
+                ta.setText(text);
                 break;
             case "Notes":
                 text = gameBoard.getNotes();
                 ta.setEditable(true);
                 wasOnNotes = true;
+                ta.setText(text);
                 break;
-            case "Create":
+            case "Create": // create a new game file from data input into game creation window
                 // make the game file
                 break;
-            case "Cancel":
+            case "Cancel": // cancel creating a new game file
                 switchWindow("Menu");
                 break;
         }
-
-        ta.setText(text);
 
     }
 }

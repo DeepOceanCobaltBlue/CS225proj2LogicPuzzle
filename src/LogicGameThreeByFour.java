@@ -19,6 +19,7 @@
  *
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  *                - moved functionality from abstract class
+ * 2/20 [chris]   - refactored some methods to accommodate new code for new GUI items
  */
 
 import javax.swing.*;
@@ -33,8 +34,7 @@ import java.util.Scanner;
  * - Handle game file I/O
  * - initialize game board
  * - launch game window
- * - handle control panel functions
- *   - hints, submit answers [new game, loading game boards]
+ * - handle functions from buttons that change the state of the application
  */
 public class LogicGameThreeByFour implements ActionListener {
     // __ ATTRIBUTES __
@@ -63,6 +63,10 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     // __ FUNCTIONS __
+
+    /**
+     * Controls the start and stop of the in game timer
+     */
     private void clock() {
         if(runClock) {
             timer = new Timer(1000, e -> {
@@ -157,7 +161,7 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     /**
-     *
+     * Open file selection window and retrieve game file
      */
     private File importGameBoard() {
         JFileChooser fileChooser = new JFileChooser("Game Files");
@@ -250,6 +254,10 @@ public class LogicGameThreeByFour implements ActionListener {
         functionButtons[4].addActionListener(this);
     }
 
+    /**
+     * calls the GUI method to initialize gui windows and set the frame content pane
+     * to the first window(Menu)
+     */
     public void play() {
         // display main menu
         this.gui.start();
