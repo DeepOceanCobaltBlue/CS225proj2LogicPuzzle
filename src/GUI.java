@@ -668,8 +668,8 @@ public class GUI implements ActionListener{
     }
 
 
-    public JTextArea getFeedbackTA(){
-        return this.feedbackTextArea;
+    public void setFeedbackTAText(String input){
+        this.feedbackTextArea.setText(input);
     }
 
     /**
