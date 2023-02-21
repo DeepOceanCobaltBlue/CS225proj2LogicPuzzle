@@ -67,6 +67,7 @@ public class LogicGameThreeByFour implements ActionListener {
         this.gui = new GUI(functionButtons);
     }
 
+    /* TODO: filepath comes from popup window now
     public LogicGameThreeByFour(String filepath) { //   constructor with arguments
         this.startTime = 0;
         this.endTime = 0;
@@ -78,6 +79,7 @@ public class LogicGameThreeByFour implements ActionListener {
         createButtons();
         this.gui = new GUI(functionButtons);
     }
+     */
 
     // __ FUNCTIONS __
 
