@@ -730,10 +730,7 @@ public class GUI implements ActionListener{
                 answerTextAreaInputs[i] = ((JTextArea)taAnswerPanel.getComponent(i)).getText();
             }
             String[] trueRows = new String[4];
-            trueRows[0] = (answerTextAreaInputs[0] + "," + answerTextAreaInputs[1] + "," + answerTextAreaInputs[2]);
-            trueRows[1] = (answerTextAreaInputs[3] + "," + answerTextAreaInputs[4] + "," + answerTextAreaInputs[5]);
-            trueRows[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
-            trueRows[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
+
 
             /* get Blocks information */
             JPanel sPanel = (JPanel) inputComponents.getComponent(0);
@@ -808,17 +805,29 @@ public class GUI implements ActionListener{
             pw.write(trueRows[2]);
 
             pw.write("CLUES");
-            // DELINEATE CLUES BY NEW LINES
+
+            JPanel cPanel = (JPanel) inputComponents.getComponent(3);
+            JPanel clueInputPanel = (JPanel) cPanel.getComponent(1);
+            String[] clues = ((JTextArea)clueInputPanel.getComponent(0)).getText().split(",");
+            for(String s : clues) {
+                pw.write(s);
+            }
 
             pw.write("STORY");
-            // ONE LINE
+            JPanel storyPanel = (JPanel) inputComponents.getComponent(4);
+            JPanel storyInputPanel = (JPanel) storyPanel.getComponent(1);
+            String story = ((JTextArea)storyInputPanel.getComponent(0)).getText();
+
+            pw.write(story);
 
             pw.write("ANSWER");
-            // DELINEATE BY ,
-
+            // answerTextAreaInputs
+            String[] answer = new String[4];
+            answer[0] = (answerTextAreaInputs[0] + "," + answerTextAreaInputs[1] + "," + answerTextAreaInputs[2]);
+            answer[1] = (answerTextAreaInputs[3] + "," + answerTextAreaInputs[4] + "," + answerTextAreaInputs[5]);
+            answer[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
+            answer[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
             pw.write("END");
-
-
         }
     }
 }
