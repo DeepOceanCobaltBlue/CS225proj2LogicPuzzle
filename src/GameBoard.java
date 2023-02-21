@@ -4,6 +4,7 @@
  *              - wrote version 1.0 of the class and added documentation
  * 2/18 [chris] - removed filepath from game board and added a parameterized constructor
  *              - updated class comment to reflect change, updated comments
+ * 2/20 [phoenix] - added dialog and text area for error feedback
  * 2/20 [Andrew] -Updated class organization
  *               -added more documentation (comments)
  * 2/21 [phoenix] - created hint related methods

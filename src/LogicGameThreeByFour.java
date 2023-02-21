@@ -22,6 +22,7 @@
  * 2/20 [chris]   - refactored some methods to accommodate new code for new GUI items
  * 2/21 [Andrew] - updated class with documentation and overall cleanup
  * 2/21 [phoenix] - Finished hint system
+ *                - Finished file error system
  */
 
 import javax.swing.*;
