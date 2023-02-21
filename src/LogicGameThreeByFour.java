@@ -161,7 +161,8 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     /**
-     * Open file selection window and retrieve game file
+     * Open file selection window and retrieve game file.
+     * No error check or safety for selecting a file that isn't a game file.
      */
     private File importGameBoard() {
         JFileChooser fileChooser = new JFileChooser("Game Files");
