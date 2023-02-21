@@ -298,14 +298,12 @@ public class LogicGameThreeByFour implements ActionListener {
         JButton pressedButton = (JButton) e.getSource();
         switch (pressedButton.getText()) {
             case "Submit":
+                boolean win = findIncorrectBlocks(true).size() > 0;
                 runClock = false; // do not allow timer to run
                 clock(); // stop timer
-                if(findIncorrectBlocks(true).size() > 0) {
-                    // Tell user they were correct
-                }
-                else {
-                    // Tell user they were incorrect
-                }
+                /*gui.setInfoArea("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
+                        (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.
+                        \nYour total time is " + (currentTime+penaltyTime) : "There were " + findIncorrectBlocks(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");*/
                 break;
             case "Hint":
                 giveHint();
