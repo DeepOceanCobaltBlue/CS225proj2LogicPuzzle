@@ -46,6 +46,7 @@ public class GUI implements ActionListener{
     private JPanel menuRootPane;
     private JPanel gameRootPane;
     private JPanel gameCreationRootPane;
+    private JTextArea feedbackTextArea;
 
 
     // __ CONSTRUCTORS __
@@ -154,7 +155,7 @@ public class GUI implements ActionListener{
         JButton submitButton = this.controls[1];
         submitButton.setText("Submit");
 
-        JTextArea feedbackTextArea = new JTextArea();
+        feedbackTextArea = new JTextArea();
         feedbackTextArea.setPreferredSize(new Dimension((int)controlPanel.getPreferredSize().getWidth(), 200));
         feedbackTextArea.setBorder(new LineBorder(Color.black));
         feedbackTextArea.setText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n How to play\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
@@ -664,6 +665,11 @@ public class GUI implements ActionListener{
                 break;
         }
 
+    }
+
+
+    public JTextArea getFeedbackTA(){
+        return this.feedbackTextArea;
     }
 
     /**
