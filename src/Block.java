@@ -6,6 +6,7 @@
  * 2/19 [chris] - implemented cycling images for buttons
  *              - updated documentation to reflect changes
  * 2/19 [phoenix] - moved code from findIncorrectBlocks() from LogicGame to here
+ * 2/20 [Andrew] - Updated class with comments for each method provided
  */
 
 import javax.imageio.ImageIO;
@@ -37,7 +38,7 @@ public class Block implements ActionListener {
     private static Image[] images;
 
     // __ CONSTRUCTORS __
-    public Block() {
+    public Block() { // default constructor
         matrix = new Square[4][4];
         blockRowTitle = null;
         blockColTitle  = null;
@@ -45,7 +46,7 @@ public class Block implements ActionListener {
         columnTitles = new String[4];
     }
 
-    public Block(String rowTitle, String[] rowTitles, String columnTitle, String[] columnTitles, String order) {
+    public Block(String rowTitle, String[] rowTitles, String columnTitle, String[] columnTitles, String order) { // constructor with arguments
         this();
         this.blockRowTitle = rowTitle;
         this.blockColTitle = columnTitle;
@@ -149,11 +150,14 @@ public class Block implements ActionListener {
     // TODO: displayErrors() Finds all incorrect squares and displays their error background(to be implemented).
 
     // __ ACCESSORS __
-    public Square[][] getSquares() { return this.matrix;}
-    public String getBlockRowTitle() { return this.blockRowTitle;}
-    public String getBlockColTitle() { return this.blockColTitle;}
-    public String[] getColumnTitles() { return this.columnTitles;}
-    public String[] getRowTitles() { return this.rowTitles;}
+    public Square[][] getSquares() { return this.matrix;} //    returns the given matrix of Square objects
+    public String getBlockRowTitle() { return this.blockRowTitle;} //   returns the name of the row the Square is in
+    public String getBlockColTitle() { return this.blockColTitle;} //   returns the name of the column the Square is in
+    public String[] getRowTitles() { return this.rowTitles;} //   returns the names of the rows that the Squares are in
+    public String[] getColumnTitles() { return this.columnTitles;} //   returns the names of the columns that the Squares are in
+    public Component getSquare(int a, int b) {
+        return matrix[a][b];
+    } //    returns the matrix placement of a requested Square
 
     // __ OVERRIDES __
 
@@ -179,9 +183,5 @@ public class Block implements ActionListener {
                 changeSquareToOrFromTrue(clicked, Square.State.EMPTY, Square.State.EMPTY);
                 break;
         }
-    }
-
-    public Component getSquare(int a, int b) {
-        return matrix[a][b];
     }
 }

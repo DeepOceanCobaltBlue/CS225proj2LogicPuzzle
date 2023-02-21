@@ -4,6 +4,7 @@
  *              - wrote version 1.0 of the class and added documentation
  * 2/18 [chris] - minor alterations to properly initialize Squares
  * 2/19 [chris] - Updated documentation to reflect changes
+ * 2/20 [Andrew] - Updated class with comments for each method provided
  */
 
 import javax.swing.*;
@@ -36,7 +37,7 @@ public class Square extends JButton {
     private Image[] images;
 
     // __ CONSTRUCTORS __
-    public Square() {
+    public Square() { //    default constuctor
         rowIndex = 0;
         colIndex = 0;
         currentState = State.EMPTY;
@@ -50,7 +51,7 @@ public class Square extends JButton {
      * @param colIndex - index for the column housing this square
      * @param correctState - EMPTY, TRUE, FALSE: retrieved from game file
      */
-    public Square(int rowIndex, int colIndex, State correctState) {
+    public Square(int rowIndex, int colIndex, State correctState) { //  constructor with parameters
         this();
         this.rowIndex = rowIndex;
         this.colIndex = colIndex;
@@ -86,21 +87,21 @@ public class Square extends JButton {
     }
 
     // __ ACCESSORS __
-    public State getCurrentState() { return this.currentState; }
-    public void setCurrentState(State newState) {
+    public State getCurrentState() { return this.currentState; } // retrieves the current state of the selected Square
+    public State getCorrectState() {
+        return correctState;
+    } //    retrieves the correct state of the selected Square
+    public void setCurrentState(State newState) { //    sets the state of the selected Square
         this.currentState = newState;
         setDisplay(this.currentState);
     }
-    public State getCorrectState() {
-        return correctState;
-    }
     public int getRowIndex() {
         return rowIndex;
-    }
+    } //    retrieves the row the selected Square is in
     public int getColIndex() {
         return colIndex;
-    }
+    } //    retrieves the column the selected Square is in
     public void setImages(Image[] images) {
         this.images = images;
-    }
+    } //    sets the image of the selected Square
 }

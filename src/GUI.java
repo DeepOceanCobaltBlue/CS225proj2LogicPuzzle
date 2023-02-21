@@ -3,6 +3,7 @@
  * 2/16 [chris] - created and implemented title panel methods including createRotatedImage()
  * 2/18 [chris] - GUI gamePanel completed
  * 2/19 [chris] - infoPanel and controlPanel completed
+ * 2/20 [Andrew] - Updated InfoPanel display
  */
 
 import javax.swing.*;
@@ -380,7 +381,7 @@ public class GUI implements ActionListener{
             case "Clues":
                 String[] clues = gameBoard.getClues();
                 for(int a = 0; a < clues.length; a++) {
-                    text = text.concat(clues[a] + "\n");
+                    text = text.concat(clues[a] + "\n\n"); // double line spacing in between clues for easy reading
                 }
                 wasOnNotes = false;
                 ta.setEditable(false);

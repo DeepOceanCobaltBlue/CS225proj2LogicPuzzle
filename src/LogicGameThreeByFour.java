@@ -19,6 +19,7 @@
  *
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  *                - moved functionality from abstract class
+ * 2/20 [Andrew]  -Added comments and more documentation on the class file
  */
 
 import javax.swing.*;
@@ -53,7 +54,7 @@ public class LogicGameThreeByFour implements ActionListener {
 
 
     // __ CONSTRUCTORS __
-    public LogicGameThreeByFour() {
+    public LogicGameThreeByFour() { //  default constructor
         this.startTime = 0;
         this.endTime = 0;
         this.penaltyTime = 0;
@@ -67,7 +68,7 @@ public class LogicGameThreeByFour implements ActionListener {
         createGUI();                            // pass game board to GUI to initialize gui
     }
 
-    public LogicGameThreeByFour(String filepath) {
+    public LogicGameThreeByFour(String filepath) { //   constructor with arguments
         this.startTime = 0;
         this.endTime = 0;
         this.penaltyTime = 0;
@@ -88,7 +89,7 @@ public class LogicGameThreeByFour implements ActionListener {
         this.setGUI(new GUI(this.getGameBoard()));
     }
 
-    private void clock() {
+    private void clock() { //   creating the clock element that updates at the bottom of the game's app window
         if(runClock) {
             timer = new Timer(1000, e -> {
                 long timeSeconds = (int)((System.currentTimeMillis() - getStartTime())/1000);
@@ -308,25 +309,31 @@ public class LogicGameThreeByFour implements ActionListener {
     // __ MUTATORS __
     public void setGUI(GUI gui) {
         this.gui = gui;
-    }
+    } //    sets the GUI for play
     public void setGameBoard(GameBoard gameBoard) {
         this.gameBoard = gameBoard;
-    }
+    } //    sets the Gameboard for play
 
     // __ ACCESSORS __
+
+    //time methods
     public long getStartTime() {
         return startTime;
-    }
-    public GUI getGUI() {
-        return gui;
-    }
-    public GameBoard getGameBoard() {
-        return gameBoard;
-    }
+    } //    returns the start time of the game
     public long getEndTime() {
         return endTime;
-    }
+    } //    returns the end time of the game
     public long getPenaltyTime() {
         return penaltyTime;
-    }
+    } //    returns the penalty time of the current game
+
+
+    public GUI getGUI() {
+        return gui;
+    } //    returns the current GUI layout of the game
+    public GameBoard getGameBoard() {
+        return gameBoard;
+    } //    returns the current state of Gameboard in the game
+
+
 }
