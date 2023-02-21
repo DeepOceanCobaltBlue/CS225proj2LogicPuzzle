@@ -7,6 +7,7 @@
  *              - updated documentation to reflect changes
  * 2/19 [phoenix] - moved code from findIncorrectBlocks() from LogicGame to here
  * 2/20 [Andrew] - Updated class with comments for each method provided
+ * 2/21 [Andrew] - Updated class with more methods to display user errors and the proper graphic to match
  *
  * 2/21 [phoenix] - edited hint related methods
  */
@@ -181,7 +182,7 @@ public class Block implements ActionListener {
     }
 
 
-    // TODO: displayErrors() Finds all incorrect squares and displays their error background(to be implemented).
+
     public void displayErrors(boolean includeEmpty){ // Finds all incorrect squares and displays their error background (Red)
         for (Square[] sqRow : this.matrix){
             for (Square square : sqRow){

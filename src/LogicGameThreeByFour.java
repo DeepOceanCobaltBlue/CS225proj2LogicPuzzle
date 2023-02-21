@@ -20,6 +20,7 @@
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  *                - moved functionality from abstract class
  * 2/20 [chris]   - refactored some methods to accommodate new code for new GUI items
+ * 2/21 [Andrew] - updated class with documentation and overall cleanup
  * 2/21 [phoenix] - Finished hint system
  */
 
@@ -283,24 +284,24 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     // __ MUTATORS __
-    public void setGUI(GUI gui) {
+    public void setGUI(GUI gui) { // sets the GUI to the desired object reference
         this.gui = gui;
     }
-    public void setGameBoard(GameBoard gameBoard) {
+    public void setGameBoard(GameBoard gameBoard) { // sets the GameBoard to the desired object reference
         this.gameBoard = gameBoard;
     }
 
     // __ ACCESSORS __
-    public long getCurrentTime() {
+    public long getCurrentTime() { //   returns the time on the stopwatch
         return currentTime;
     }
-    public GUI getGUI() {
+    public GUI getGUI() { //    returns the current GUI object
         return gui;
     }
-    public GameBoard getGameBoard() {
+    public GameBoard getGameBoard() { //    returns the current GameBoard object
         return gameBoard;
     }
-    public long getPenaltyTime() {
+    public long getPenaltyTime() { //   returns the penaltyTimer recorded by the stopwatch
         return penaltyTime;
     }
 }
