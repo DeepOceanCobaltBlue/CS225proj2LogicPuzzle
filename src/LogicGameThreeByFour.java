@@ -250,6 +250,7 @@ public class LogicGameThreeByFour implements ActionListener {
                                 (currentTime+penaltyTime) + "." :
                                 "There were " + gameBoard.getErrorBlockIndices(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");
                 gameBoard.showAllErrors();
+                gameBoard.endGame();
                 break;
             case "Hint":
                 giveHint();

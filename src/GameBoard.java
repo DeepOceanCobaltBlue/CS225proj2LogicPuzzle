@@ -78,6 +78,17 @@ public class GameBoard {
         blocks[(errorIndices.get(randIndex)/2)%2][errorIndices.get(randIndex)%2].setEmptyCorrect();
     }
 
+    public void endGame() {
+        for (Block[] blRow : blocks) {
+            for (Block block : blRow) {
+                if (block != null) {
+                    block.displayErrors(true);
+                    block.setClickable(false);
+                }
+            }
+        }
+    }
+
     // __ ACCESSORS __
     public String[] getClues(){
         return this.clues;

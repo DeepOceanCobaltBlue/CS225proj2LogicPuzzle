@@ -40,6 +40,7 @@ public class Block implements ActionListener {
     /* images displayed on individual Squares to display currentState */
     /* [0] = FALSE, [1] = TRUE */
     private static Image[] images;
+    private boolean clickable;
 
     // __ CONSTRUCTORS __
     public Block() { // default constructor
@@ -48,6 +49,7 @@ public class Block implements ActionListener {
         blockColTitle  = null;
         rowTitles = new String[4];
         columnTitles = new String[4];
+        clickable = true;
     }
 
     /**
@@ -181,8 +183,6 @@ public class Block implements ActionListener {
 
     }
 
-
-
     public void displayErrors(boolean includeEmpty){ // Finds all incorrect squares and displays their error background (Red)
         for (Square[] sqRow : this.matrix){
             for (Square square : sqRow){
@@ -192,6 +192,13 @@ public class Block implements ActionListener {
             }
         }
 
+    }
+
+    // __ MUTATORS __
+
+
+    public void setClickable(boolean clickable) {
+        this.clickable = clickable;
     }
 
     // __ ACCESSORS __
@@ -214,19 +221,21 @@ public class Block implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        Square clicked = (Square)e.getSource();
+        if (clickable) {
+            Square clicked = (Square) e.getSource();
 
-        /* Set Square to next State in cycle and handle necessary changes to neighbor Squares */
-        switch(clicked.getCurrentState()) {
-            case EMPTY:
-                clicked.setCurrentState(Square.State.FALSE);
-                break;
-            case FALSE:/* change neighbor Squares to FALSE, current Square to TRUE */
-                changeSquareToOrFromTrue(clicked, Square.State.FALSE, Square.State.TRUE);
-                break;
-            case TRUE: /* change neighbor Squares to EMPTY, current Square to Empty */
-                changeSquareToOrFromTrue(clicked, Square.State.EMPTY, Square.State.EMPTY);
-                break;
+            /* Set Square to next State in cycle and handle necessary changes to neighbor Squares */
+            switch (clicked.getCurrentState()) {
+                case EMPTY:
+                    clicked.setCurrentState(Square.State.FALSE);
+                    break;
+                case FALSE:/* change neighbor Squares to FALSE, current Square to TRUE */
+                    changeSquareToOrFromTrue(clicked, Square.State.FALSE, Square.State.TRUE);
+                    break;
+                case TRUE: /* change neighbor Squares to EMPTY, current Square to Empty */
+                    changeSquareToOrFromTrue(clicked, Square.State.EMPTY, Square.State.EMPTY);
+                    break;
+            }
         }
     }
 
