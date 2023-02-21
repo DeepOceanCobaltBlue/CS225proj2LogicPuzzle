@@ -61,11 +61,10 @@ public class LogicGameThreeByFour implements ActionListener {
         this.penaltyTime = 0;
         this.timer = new Timer(0, null);
         this.runClock = false;
-        this.functionButtons = new JButton[2];
-
-        // String filepath = importGameBoard();    // get filepath to Game file
-        // fileReader(filepath);                   // read file and initialize game board
-        createButtons();                        // Initialize control function buttons and pass to game board
+        this.functionButtons = new JButton[5];
+        this.gameBoard = null;
+        createButtons();
+        this.gui = new GUI(functionButtons);
     }
 
     public LogicGameThreeByFour(String filepath) { //   constructor with arguments
