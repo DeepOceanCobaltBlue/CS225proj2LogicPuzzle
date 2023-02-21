@@ -59,7 +59,7 @@ public class GameBoard {
                         incBlocks.add(block);
                     }
                 }
-        }
+            }
 
         return incBlocks;
     }

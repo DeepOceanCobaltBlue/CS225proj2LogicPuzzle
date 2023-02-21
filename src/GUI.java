@@ -3,9 +3,13 @@
  * 2/16 [chris] - created and implemented title panel methods including createRotatedImage()
  * 2/18 [chris] - GUI gamePanel completed
  * 2/19 [chris] - infoPanel and controlPanel completed
- * 2/20 [Andrew] - Updated InfoPanel display
+ *              - added timer
+ * 2/20 [chris] - added menu
+ *              - added leaderboard
+ *              - added more game files( game2, game3, game4)
  */
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -15,7 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.sql.Time;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Construct a Graphical interface for a 3x4 Logic Puzzle using GameBoard data structure.
@@ -33,23 +40,97 @@ public class GUI implements ActionListener{
     /* Updated on 1 second intervals to display total time the player has been attempting current puzzle */
     private JLabel timeValueLabel;
 
+    /* Reference used to pass control buttons to GUI in order to display.
+     * However, logic for controls are handled in the LogicGame class */
+    private JButton[] controls;
+    private JPanel menuRootPane;
+    private JPanel gameRootPane;
+    private JPanel gameCreationRootPane;
+    private JTextArea feedbackTextArea;
+
 
     // __ CONSTRUCTORS __
     public GUI() {
         this.rootFrame = new JFrame(" Logic Puzzle Game ");
+        // Frame settings
+        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.rootFrame.setMinimumSize(new Dimension(1000, 480));
+        this.rootFrame.setVisible(true);
+        this.gameBoard = null;
         this.wasOnNotes = false;
+        this.controls = null;
+
     }
 
-    public GUI(GameBoard gb) {
+    public GUI(JButton[] controls) {
         this();
-        this.gameBoard = gb;
-        this.blocks = gb.getBlocks();
-        createGUI();
+        this.controls = controls;
+    }
+
+    /**
+     * Swaps the root panel displayed as the frame content pane to move between
+     * menu windows.
+     * @param name - Name of the window you want to swap to. Name is independent of
+     *             any object property.
+     */
+    public void switchWindow(String name) {
+        switch(name) {
+            case "Creation":
+                this.rootFrame.setContentPane(this.gameCreationRootPane);
+                break;
+            case "Menu":
+                this.rootFrame.setContentPane(this.menuRootPane);
+                break;
+            case "Game":
+                this.rootFrame.setContentPane(this.gameRootPane);
+                break;
+        }
+        this.rootFrame.pack();
+        this.rootFrame.revalidate();
+        this.rootFrame.repaint();
+        this.rootFrame.setVisible(true);
     }
 
     // __ FUNCTIONS __
+
     /**
-     * Initialize all graphical components and construct the GUI
+     * Constructs the graphical interface for the opening menu root panel.
+     * this panel is the first thing displayed upon launching the application.
+     */
+    private void createMenuInterface() {
+        /* bottom layer of menu */
+        menuRootPane = new JPanel();
+        menuRootPane.setLayout(new BoxLayout(menuRootPane, BoxLayout.Y_AXIS));
+
+        /* Button panel for menu options */
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(0, 0, 20, 0);
+
+        /* initialize and compose menu panel components */
+        JButton newGameButton = this.controls[2];
+        newGameButton.setPreferredSize(new Dimension(350, 50));
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        menuPanel.add(newGameButton, constraints);
+
+        JButton leaderButton = this.controls[3];
+        leaderButton.setPreferredSize(new Dimension(350, 50));
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        menuPanel.add(leaderButton, constraints);
+
+        JButton createButton = this.controls[4];
+        createButton.setPreferredSize(new Dimension(350, 50));
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        menuPanel.add(createButton, constraints);
+
+        menuRootPane.add(menuPanel);
+    }
+    /**
+     * Initialize all graphical components and construct the GUI of the game window
      * root frame will hold all child panels
      * root frame has 9 square child panels
      *          Left     Mid    Right
@@ -59,20 +140,22 @@ public class GUI implements ActionListener{
      *  Panels labeled as Row x Col => TopLeftPanel (is the blank panel in the top left corner)
      *
      */
-    private void createGUI() {
+    private void createGameInterface() {
+        gameRootPane = new JPanel(new BorderLayout());
+
         /* Houses the control function buttons for the player to interact with */
         JPanel controlPanel = new JPanel(new BorderLayout());
-        controlPanel.setPreferredSize(new Dimension(200, 600));
+        controlPanel.setPreferredSize(new Dimension(200, 480));
         controlPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,1,1,3)));
 
         /* initialize controlPanel components */
-        JButton hintButton = gameBoard.getControls()[0];
+        JButton hintButton = this.controls[0];
         hintButton.setText("Get Hint");
 
-        JButton submitButton = gameBoard.getControls()[1];
+        JButton submitButton = this.controls[1];
         submitButton.setText("Submit");
 
-        JTextArea feedbackTextArea = new JTextArea();
+        feedbackTextArea = new JTextArea();
         feedbackTextArea.setPreferredSize(new Dimension((int)controlPanel.getPreferredSize().getWidth(), 200));
         feedbackTextArea.setBorder(new LineBorder(Color.black));
         feedbackTextArea.setText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n How to play\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
@@ -82,6 +165,7 @@ public class GUI implements ActionListener{
                 "stuck, ask for a hint(above) and an incorrect square will be highlighted or a correct square will be " +
                 "filled in for you!\n\n>> 5) You can only hit submit once so logic your way to the solution and have fun!");
         feedbackTextArea.setLineWrap(true);
+        feedbackTextArea.setWrapStyleWord(true);
         feedbackTextArea.setEditable(false);
 
         /* compose controlPanel */
@@ -91,7 +175,7 @@ public class GUI implements ActionListener{
 
         /* Used to display information to the player */
         JPanel infoPanel = new JPanel(new BorderLayout());
-        infoPanel.setPreferredSize(new Dimension(250, 600));
+        infoPanel.setPreferredSize(new Dimension(250, 480));
         infoPanel.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(1,3,1,1)));
 
         JPanel infoButtonPanel = new JPanel();
@@ -126,6 +210,7 @@ public class GUI implements ActionListener{
         JTextArea infoTextArea = new JTextArea();
         infoTextArea.setPreferredSize(new Dimension((int)infoPanel.getPreferredSize().getWidth(), 300));
         infoTextArea.setLineWrap(true);
+        infoTextArea.setWrapStyleWord(true);
         infoTextArea.setEditable(false);
 
         JPanel timerPanel = new JPanel(new GridLayout(1, 1));
@@ -181,19 +266,173 @@ public class GUI implements ActionListener{
         /* Initialize infoTextArea text by simulating clicking the "Clues" button */
         clueButton.doClick();
 
-        // Frame settings
-        this.rootFrame.setLayout(new BorderLayout());
-        this.rootFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.rootFrame.setMinimumSize(new Dimension(900, 480));
-
-        /* compose frame */
-        this.rootFrame.add(controlPanel, BorderLayout.WEST);
-        this.rootFrame.add(gamePanel, BorderLayout.CENTER);
-        this.rootFrame.add(infoPanel, BorderLayout.EAST);
+        /* compose interface for game */
+        gameRootPane.add(controlPanel, BorderLayout.WEST);
+        gameRootPane.add(gamePanel, BorderLayout.CENTER);
+        gameRootPane.add(infoPanel, BorderLayout.EAST);
     }
 
+    /**
+     * Constructs the graphical interface for the game file creation root
+     * panel. The panel is used if the player selects to create a new game
+     * file.
+     */
+    private void createGameCreationInterface() {
+        gameCreationRootPane = new JPanel(new BorderLayout());
+
+        /* initialize and compose button panel components */
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBorder(new LineBorder(Color.CYAN));
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setPreferredSize(new Dimension(100, 30));
+        cancelButton.addActionListener(this);
+        JButton createButton = new JButton("Create");
+        createButton.setPreferredSize(new Dimension(100, 30));
+        createButton.addActionListener(this);
+        buttonPanel.add(cancelButton, BorderLayout.WEST);
+        buttonPanel.add(createButton, BorderLayout.EAST);
+
+        /* initialize and compose input panel components */
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(2,2));
+        inputPanel.setBorder(new LineBorder(Color.BLACK));
+
+        /* Subject and row input components*/
+        JPanel subjectPanel = new JPanel();
+        subjectPanel.setLayout(new BoxLayout(subjectPanel, BoxLayout.Y_AXIS));
+        subjectPanel.setBorder(new LineBorder(Color.BLACK));
+
+        // panel to hold title
+        JPanel titlePanel1 = new JPanel();
+        titlePanel1.setBorder(new LineBorder(Color.BLACK));
+        JLabel label1 = new JLabel("Title headers and sub-categories");
+        titlePanel1.add(label1);
+        subjectPanel.add(titlePanel1);
+        // panel to hold labels
+        JPanel subjectLabelPanel = new JPanel(new GridLayout(1,3));
+        JLabel subjectLabel1 = new JLabel("Category 1  ");
+        JLabel subjectLabel2 = new JLabel("Category 2  ");
+        JLabel subjectLabel3 = new JLabel("Category 3");
+        subjectLabelPanel.add(subjectLabel1);
+        subjectLabelPanel.add(subjectLabel2);
+        subjectLabelPanel.add(subjectLabel3);
+        subjectPanel.add(subjectLabelPanel);
+
+        // panel to hold textareas
+        JPanel subjectTextPanel = new JPanel(new GridLayout(5,3));
+        JTextArea[][] blockTitles = new JTextArea[5][3];
+        for(int a = 0; a < blockTitles.length; a++) {
+            for(int b = 0; b < blockTitles[a].length; b++) {
+                blockTitles[a][b] = new JTextArea();
+                blockTitles[a][b].setBorder(new LineBorder(Color.BLACK));
+                blockTitles[a][b].setPreferredSize(new Dimension(100, 25));
+                if(a == 0) {
+                    blockTitles[a][b].setText("Title");
+                } else {
+                    blockTitles[a][b].setText("Row " + a);
+                }
+                subjectTextPanel.add(blockTitles[a][b]);
+            }
+        }
+
+        subjectPanel.add(subjectTextPanel);
+
+        /* Answer input components */
+        JPanel answerPanel = new JPanel();
+        answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
+        answerPanel.setBorder(new LineBorder(Color.BLACK));
+
+        // panel to hold title
+        JPanel titlePanel2 = new JPanel();
+        titlePanel2.setBorder(new LineBorder(Color.BLACK));
+        JLabel title2 = new JLabel("Answer key");
+        titlePanel2.add(title2);
+        answerPanel.add(titlePanel2);
+        // panel to hold labels
+        JPanel answerLabelPanel = new JPanel(new GridLayout(1,3));
+        answerLabelPanel.setBorder(new LineBorder(Color.BLACK));
+        JLabel answerLabel1 = new JLabel(" Category 1  ");
+        JLabel answerLabel2 = new JLabel(" Category 2  ");
+        JLabel answerLabel3 = new JLabel(" Category 3");
+        answerLabelPanel.add(answerLabel1);
+        answerLabelPanel.add(answerLabel2);
+        answerLabelPanel.add(answerLabel3);
+        answerPanel.add(answerLabelPanel);
+
+        // panel to hold textareas
+        JPanel answerTextPanel = new JPanel(new GridLayout(5,3));
+        JTextArea[][] answerTitles = new JTextArea[4][3];
+        for(int a = 0; a < answerTitles.length; a++) {
+            for(int b = 0; b < answerTitles[a].length; b++) {
+                answerTitles[a][b] = new JTextArea();
+                answerTitles[a][b].setBorder(new LineBorder(Color.BLACK));
+                answerTitles[a][b].setPreferredSize(new Dimension(100, 25));
+                answerTextPanel.add(answerTitles[a][b]);
+            }
+        }
+
+        answerPanel.add(answerTextPanel);
+
+        /* Clue input components */
+        JPanel cluePanel = new JPanel();
+        cluePanel.setBorder(new LineBorder(Color.BLACK));
+        cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
+        JLabel clueLabel = new JLabel("Clues");
+        JTextArea clueInput = new JTextArea();
+        clueInput.setLineWrap(true);
+        clueInput.setText("Clues must be delineated by new lines and start with numbers i.e. 1) Clue ~~~~ [new line]");
+        clueInput.setPreferredSize(new Dimension(300, 200));
+        cluePanel.add(clueLabel);
+        cluePanel.add(clueInput);
+        /* Story input components */
+        JPanel storyPanel = new JPanel();
+        storyPanel.setBorder(new LineBorder(Color.BLACK));
+        storyPanel.setLayout(new BoxLayout(storyPanel, BoxLayout.Y_AXIS));
+        JLabel storyLabel = new JLabel("Story");
+        JTextArea storyInput = new JTextArea();
+        storyInput.setLineWrap(true);
+        storyInput.setText("Add story as a single line, no new line character except at the end.");
+        storyInput.setPreferredSize(new Dimension(300, 200));
+        storyPanel.add(storyLabel);
+        storyPanel.add(storyInput);
+        /* Detail image */
+        JPanel imagePanel = new JPanel(new GridLayout(1,1));
+        JLabel imageDisplayLabel = new JLabel();
+        try {
+            Image detailImage = ImageIO.read(new File("Square Images\\Detail.png"));
+            imageDisplayLabel.setIcon(new ImageIcon(detailImage));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        imagePanel.add(imageDisplayLabel);
+
+        inputPanel.add(subjectPanel);
+        inputPanel.add(imagePanel);
+        inputPanel.add(answerPanel);
+        inputPanel.add(cluePanel);
+        inputPanel.add(storyPanel);
+
+        gameCreationRootPane.add(buttonPanel, BorderLayout.NORTH);
+        gameCreationRootPane.add(inputPanel, BorderLayout.CENTER);
+    }
+
+    /**
+     * sets the text parameter of the JLabel used to display the running
+     * time of the game.
+     * @param time
+     */
     public void updateClock(String time) {
         timeValueLabel.setText(time);
+    }
+
+    /**
+     * creates the non-game board dependent windows and sets the Menu
+     * panel as the first window displayed.
+     */
+    public void start() {
+        createMenuInterface();
+        createGameCreationInterface();
+        switchWindow("Menu");
     }
 
     /**
@@ -350,55 +589,236 @@ public class GUI implements ActionListener{
 
     // __ ACCESSORS __
     /**
-     * Once GUI is created this method will return the finalized root frame
-     * to the application.
-     * @return - the frame containing the all the graphical components for the application
+     * Once GUI is created this method will return the root frame to the application.
+     * @return - the frame containing the content pane that displays the application
      */
     public JFrame getDisplay() {
         return rootFrame;
     }
+    // __ MUTATORS __
+    public void setGameBoard(GameBoard gameBoard) {
+        this.gameBoard = gameBoard;
+        this.blocks = gameBoard.getBlocks();
+        createGameInterface();
+    }
+    public void setControls(JButton[] functionButtons) {
+        this.controls = functionButtons;
+    }
+
+    private JTextArea getInfoPanel(JButton button) {
+        /* Get infoPanel components */
+        JPanel infoBtnPanel = (JPanel) button.getParent();
+        JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
+        /* clear 'selected' button color then set 'clicked to 'selected'*/
+        for (int i = 0; i < 3; i++) {
+            infoBtnPanel.getComponent(i).setBackground(null);
+        }
+        button.setBackground(new Color(150, 255, 255, 200));
+        return (JTextArea) infoPanel.getComponent(1);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        /* Get infoPanel components */
-        JButton clicked = (JButton)e.getSource();
-        JPanel infoBtnPanel = (JPanel) clicked.getParent();
-        JPanel infoPanel = (JPanel) infoBtnPanel.getParent();
-        JTextArea ta = (JTextArea) infoPanel.getComponent(1);
-        /* clear 'selected' button color then set 'clicked to 'selected'*/
-        for(int i = 0; i < 3; i++ ) {
-            infoBtnPanel.getComponent(i).setBackground(null);
-        }
-        clicked.setBackground(new Color(150, 255, 255, 200));
-
-        if(wasOnNotes) {
-            gameBoard.setNotes(ta.getText());
-        }
-
-        /* Alter TextArea depending on button selected */
+        JButton clicked = (JButton) e.getSource();
+        JTextArea ta;
         String text = "";
-        switch(clicked.getText()) {
+
+        switch (clicked.getText()) {
             case "Clues":
+                ta = getInfoPanel(clicked);
+                if (wasOnNotes) {
+                    gameBoard.setNotes(ta.getText());
+                }
+
                 String[] clues = gameBoard.getClues();
-                for(int a = 0; a < clues.length; a++) {
-                    text = text.concat(clues[a] + "\n\n"); // double line spacing in between clues for easy reading
+                for (int a = 0; a < clues.length; a++) {
+                    text = text.concat(clues[a] + "\n");
                 }
                 wasOnNotes = false;
                 ta.setEditable(false);
+                ta.setText(text);
                 break;
             case "Story":
+                ta = getInfoPanel(clicked);
+                if (wasOnNotes) {
+                    gameBoard.setNotes(ta.getText());
+                }
+
                 text = gameBoard.getStory();
                 ta.setEditable(false);
                 wasOnNotes = false;
+                ta.setText(text);
                 break;
             case "Notes":
+                ta = getInfoPanel(clicked);
+
                 text = gameBoard.getNotes();
                 ta.setEditable(true);
                 wasOnNotes = true;
+                ta.setText(text);
+                break;
+            case "Create": // create a new game file from data input into game creation window
+                createGameFile();
+                break;
+            case "Cancel": // cancel creating a new game file
+                switchWindow("Menu");
                 break;
         }
 
-        ta.setText(text);
+    }
 
+
+    public JTextArea getFeedbackTA(){
+        return this.feedbackTextArea;
+    }
+
+    /**
+     * creates a new game file from inputs on game creation window.
+     * no protection or error checking.
+     */
+    private void createGameFile() {
+        File directory = new File("Game files");
+        int count = directory.listFiles().length;
+        String filepath = ("Game" + (count + 1));
+        File newGameFile = new File(filepath);
+        try {
+            newGameFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(newGameFile);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(pw != null) {
+            JPanel inputComponents = (JPanel) this.gameCreationRootPane.getComponent(1); // input panel
+
+            /* Component hierarchy
+            inputComponents
+                0 - subjectPanel
+                    0 - titlePanel1
+                    1 - subjectLabelPanel
+                    2 - subjectTextPanel
+                        [0,1,2] titles
+                        [3,6,9,12] - cat 1
+                        [4,7,10,13] - cat 2
+                        [5,8,11,14] - cat 3
+                1 - imagePanel
+                2 - answerPanel
+                     0 - titlePanel2
+                     1 - answerLabelPanel
+                     2 - answerTextPanel
+                        [0,1,2] titles
+                        [3,6,9,12] - cat 1
+                        [4,7,10,13] - cat 2
+                3 - cluePanel
+                    0 - clueLabel
+                    1 - clueInput
+                4 - storyPanel
+                    0 - storyLabel
+                    1 - storyInput
+             */
+            /* Get Answer Information */
+            JPanel aPanel = (JPanel) inputComponents.getComponent(2);
+            JPanel taAnswerPanel = (JPanel) aPanel.getComponent(2);
+            String[] answerTextAreaInputs = new String[12];
+            for(int i = 0; i < answerTextAreaInputs.length; i++) {
+                answerTextAreaInputs[i] = ((JTextArea)taAnswerPanel.getComponent(i)).getText();
+            }
+            String[] trueRows = new String[4];
+            trueRows[0] = (answerTextAreaInputs[0] + "," + answerTextAreaInputs[1] + "," + answerTextAreaInputs[2]);
+            trueRows[1] = (answerTextAreaInputs[3] + "," + answerTextAreaInputs[4] + "," + answerTextAreaInputs[5]);
+            trueRows[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
+            trueRows[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
+
+            /* get Blocks information */
+            JPanel sPanel = (JPanel) inputComponents.getComponent(0);
+            JPanel taSubjectPanel = (JPanel) sPanel.getComponent(2);
+            String[] subjectTextAreaInputs = new String[15];
+            for(int i = 0; i < subjectTextAreaInputs.length; i++) {
+                subjectTextAreaInputs[i] = ((JTextArea)taSubjectPanel.getComponent(i)).getText();
+            }
+            String blockRowTitle;
+            String rowTitlesStr;
+            String blockColTitle;
+            String colTitlesStr;
+
+            /* Block 1 */
+            blockRowTitle = subjectTextAreaInputs[0];   // CAT 1 subject TITLE
+            rowTitlesStr = ( subjectTextAreaInputs[3] + "," + // Cat 1 row titles
+                                    subjectTextAreaInputs[6] + "," +
+                                    subjectTextAreaInputs[9] + "," +
+                                    subjectTextAreaInputs[12]);
+
+            blockColTitle = subjectTextAreaInputs[1];   // CAT 2 subject TITLE
+            colTitlesStr = ( subjectTextAreaInputs[4] + "," + // Cat 1 col titles
+                                    subjectTextAreaInputs[7] + "," +
+                                    subjectTextAreaInputs[10] + "," +
+                                    subjectTextAreaInputs[13]);
+            // BLOCK 1 TRUE ROW
+            pw.write("BLOCKS");
+
+            pw.write(blockRowTitle);
+            pw.write(rowTitlesStr);
+            pw.write(blockColTitle);
+            pw.write(colTitlesStr);
+            pw.write(trueRows[0]);
+
+            /* Block 2 */
+            blockRowTitle = subjectTextAreaInputs[0];// CAT 1 ROW TITLE
+            rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
+                                subjectTextAreaInputs[6] + "," +
+                                subjectTextAreaInputs[9] + "," +
+                                subjectTextAreaInputs[12]);
+
+            blockColTitle = subjectTextAreaInputs[2];// CAT 3 COL TITLE
+            colTitlesStr = (    subjectTextAreaInputs[5] + "," + // Cat 3 col titles
+                                subjectTextAreaInputs[8] + "," +
+                                subjectTextAreaInputs[11] + "," +
+                                subjectTextAreaInputs[14]);
+            // BLOCK 2 TRUE ROW
+
+            pw.write(blockRowTitle);
+            pw.write(rowTitlesStr);
+            pw.write(blockColTitle);
+            pw.write(colTitlesStr);
+            pw.write(trueRows[1]);
+
+            /* Block 3 */
+            blockRowTitle = subjectTextAreaInputs[2];// CAT 3 ROW TITLE
+            rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
+                                subjectTextAreaInputs[6] + "," +
+                                subjectTextAreaInputs[9] + "," +
+                                subjectTextAreaInputs[12]);
+
+            blockColTitle = subjectTextAreaInputs[1];// CAT 2 COL TITLE
+            colTitlesStr = (    subjectTextAreaInputs[4] + "," + // Cat 1 col titles
+                                subjectTextAreaInputs[7] + "," +
+                                subjectTextAreaInputs[10] + "," +
+                                subjectTextAreaInputs[13]);
+            // BLOCK 3 TURE ROWS
+            pw.write(blockRowTitle);
+            pw.write(rowTitlesStr);
+            pw.write(blockColTitle);
+            pw.write(colTitlesStr);
+            pw.write(trueRows[2]);
+
+            pw.write("CLUES");
+            // DELINEATE CLUES BY NEW LINES
+
+            pw.write("STORY");
+            // ONE LINE
+
+            pw.write("ANSWER");
+            // DELINEATE BY ,
+
+            pw.write("END");
+
+
+        }
     }
 }

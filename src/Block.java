@@ -129,7 +129,7 @@ public class Block implements ActionListener {
     }
 
     /**
-     *
+     * // TODO: fill this out
      * @param includeEmpty
      * @return
      */
@@ -138,8 +138,11 @@ public class Block implements ActionListener {
 
         for (Square[] sqRow : this.matrix) {
             for (Square square : sqRow) {
-                // If the state of any of the Squares is incorrect error will be set to true and stay that way.
+                // If the state of any Square is incorrect => error will be set to true and stay that way.
                 error = error || (!square.isStateCorrect() && (!(square.getCurrentState() == Square.State.EMPTY) || includeEmpty));
+                // if(error) { // do this to escape the loop
+                //     return error;
+                // }
             }
         }
         return error;
@@ -184,4 +187,5 @@ public class Block implements ActionListener {
                 break;
         }
     }
+
 }
