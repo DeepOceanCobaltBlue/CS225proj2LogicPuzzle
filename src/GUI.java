@@ -9,6 +9,7 @@
  *              - added more game files( game2, game3, game4)
  */
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -18,6 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Construct a Graphical interface for a 3x4 Logic Puzzle using GameBoard data structure.
@@ -159,6 +164,7 @@ public class GUI implements ActionListener{
                 "stuck, ask for a hint(above) and an incorrect square will be highlighted or a correct square will be " +
                 "filled in for you!\n\n>> 5) You can only hit submit once so logic your way to the solution and have fun!");
         feedbackTextArea.setLineWrap(true);
+        feedbackTextArea.setWrapStyleWord(true);
         feedbackTextArea.setEditable(false);
 
         /* compose controlPanel */
@@ -203,6 +209,7 @@ public class GUI implements ActionListener{
         JTextArea infoTextArea = new JTextArea();
         infoTextArea.setPreferredSize(new Dimension((int)infoPanel.getPreferredSize().getWidth(), 300));
         infoTextArea.setLineWrap(true);
+        infoTextArea.setWrapStyleWord(true);
         infoTextArea.setEditable(false);
 
         JPanel timerPanel = new JPanel(new GridLayout(1, 1));
@@ -292,7 +299,7 @@ public class GUI implements ActionListener{
         /* Subject and row input components*/
         JPanel subjectPanel = new JPanel();
         subjectPanel.setLayout(new BoxLayout(subjectPanel, BoxLayout.Y_AXIS));
-        subjectPanel.setBorder(new LineBorder(Color.GREEN));
+        subjectPanel.setBorder(new LineBorder(Color.BLACK));
 
         // panel to hold title
         JPanel titlePanel1 = new JPanel();
@@ -319,9 +326,9 @@ public class GUI implements ActionListener{
                 blockTitles[a][b].setBorder(new LineBorder(Color.BLACK));
                 blockTitles[a][b].setPreferredSize(new Dimension(100, 25));
                 if(a == 0) {
-                    blockTitles[a][b].setText("Category Name");
+                    blockTitles[a][b].setText("Title");
                 } else {
-                    blockTitles[a][b].setText("Subset name " + a);
+                    blockTitles[a][b].setText("Row " + a);
                 }
                 subjectTextPanel.add(blockTitles[a][b]);
             }
@@ -332,7 +339,7 @@ public class GUI implements ActionListener{
         /* Answer input components */
         JPanel answerPanel = new JPanel();
         answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
-        answerPanel.setBorder(new LineBorder(Color.GREEN));
+        answerPanel.setBorder(new LineBorder(Color.BLACK));
 
         // panel to hold title
         JPanel titlePanel2 = new JPanel();
@@ -371,6 +378,8 @@ public class GUI implements ActionListener{
         cluePanel.setLayout(new BoxLayout(cluePanel, BoxLayout.Y_AXIS));
         JLabel clueLabel = new JLabel("Clues");
         JTextArea clueInput = new JTextArea();
+        clueInput.setLineWrap(true);
+        clueInput.setText("Clues must be delineated by new lines and start with numbers i.e. 1) Clue ~~~~ [new line]");
         clueInput.setPreferredSize(new Dimension(300, 200));
         cluePanel.add(clueLabel);
         cluePanel.add(clueInput);
@@ -380,12 +389,20 @@ public class GUI implements ActionListener{
         storyPanel.setLayout(new BoxLayout(storyPanel, BoxLayout.Y_AXIS));
         JLabel storyLabel = new JLabel("Story");
         JTextArea storyInput = new JTextArea();
+        storyInput.setLineWrap(true);
+        storyInput.setText("Add story as a single line, no new line character except at the end.");
         storyInput.setPreferredSize(new Dimension(300, 200));
         storyPanel.add(storyLabel);
         storyPanel.add(storyInput);
         /* Detail image */
         JPanel imagePanel = new JPanel(new GridLayout(1,1));
         JLabel imageDisplayLabel = new JLabel();
+        try {
+            Image detailImage = ImageIO.read(new File("Square Images\\Detail.png"));
+            imageDisplayLabel.setIcon(new ImageIcon(detailImage));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         imagePanel.add(imageDisplayLabel);
 
         inputPanel.add(subjectPanel);
@@ -640,12 +657,104 @@ public class GUI implements ActionListener{
                 ta.setText(text);
                 break;
             case "Create": // create a new game file from data input into game creation window
-                // make the game file
+                createGameFile();
                 break;
             case "Cancel": // cancel creating a new game file
                 switchWindow("Menu");
                 break;
         }
 
+    }
+
+    /**
+     * creates a new game file from inputs on game creation window.
+     * no protection or error checking.
+     */
+    private void createGameFile() {
+        File directory = new File("Game files");
+        int count = directory.listFiles().length;
+        String filepath = ("Game" + (count + 1));
+        File newGameFile = new File(filepath);
+        try {
+            newGameFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(newGameFile);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(pw != null) {
+            String blockRowTitle;
+            String[] rowTitles;
+            String blockColTitle;
+            String[] columnTitles;
+            String story;
+            String[] clues;
+            String[] answer;
+
+            JPanel inputComponents = (JPanel) this.gameCreationRootPane.getComponent(1); // input panel
+
+            /* Component hierarchy
+                0 - subjectPanel
+                    0 - titlePanel1
+                    1 - subjectLabelPanel
+                    2 - subjectTextPanel
+                        [0,1,2] titles
+                        [3,6,9,12] - cat 1
+                        [4,7,10,13] - cat 2
+                        [5,8,11,14] - cat 3
+                1 - imagePanel
+                2 - answerPanel
+                     0 - titlePanel2
+                     1 - answerLabelPanel
+                     2 - answerTextPanel
+                        [0,1,2] titles
+                        [3,6,9,12] - cat 1
+                        [4,7,10,13] - cat 2
+                3 - cluePanel
+                    0 - clueLabel
+                    1 - clueInput
+                4 - storyPanel
+                    0 - storyLabel
+                    1 - storyInput
+             */
+
+            pw.write("BLOCKS");
+            // CAT 1 ROW TITLE
+            // CAT 1 ROW TITLES
+            // CAT 2 COL TITLE
+            // CAT 2 COL TITLES
+            // BLOCK 1 TRUE ROW
+
+            // CAT 1 ROW TITLE
+            // CAT 1 ROW TITLES
+            // CAT 3 COL TITLE
+            // CAT 3 COL TITLES
+            // BLOCK 2 TRUE ROW
+
+            // CAT 3 ROW TITLE
+            // CAT 3 ROW TITLES
+            // CAT 2 COL TITLE
+            // CAT 2 COL TITLES
+            // BLOCK 3 TURE ROWS
+
+            pw.write("CLUES");
+            // DELINEATE CLUES BY NEW LINES
+
+            pw.write("STORY");
+            // ONE LINE
+
+            pw.write("ANSWER");
+            // DELINEATE BY ,
+
+            pw.write("END");
+
+
+        }
     }
 }
