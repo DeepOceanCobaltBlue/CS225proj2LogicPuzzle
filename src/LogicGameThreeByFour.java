@@ -247,8 +247,7 @@ public class LogicGameThreeByFour implements ActionListener {
                 clock(); // stop timer
                 gui.setFeedbackTAText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
                         (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.\nYour total time is " +
-                                (currentTime+penaltyTime) + "." :
-                                "There were " + gameBoard.getErrorBlockIndices(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");
+                                (currentTime+penaltyTime) + "." : "The mistakes are shown on the board.") + "\n\n\n Thanks for playing!");
                 gameBoard.showAllErrors();
                 gameBoard.endGame();
                 break;
