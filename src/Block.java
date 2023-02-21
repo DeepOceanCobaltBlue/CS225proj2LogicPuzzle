@@ -46,6 +46,14 @@ public class Block implements ActionListener {
         columnTitles = new String[4];
     }
 
+    /**
+     * Constructor requirements
+     * @param rowTitle
+     * @param rowTitles
+     * @param columnTitle
+     * @param columnTitles
+     * @param order
+     */
     public Block(String rowTitle, String[] rowTitles, String columnTitle, String[] columnTitles, String order) { // constructor with arguments
         this();
         this.blockRowTitle = rowTitle;
@@ -130,7 +138,7 @@ public class Block implements ActionListener {
 
     /**
      * // TODO: fill this out
-     * @param includeEmpty
+     * @param includeEmpty sets t/f depending on if the Square object is empty
      * @return
      */
     public boolean anyErrors(boolean includeEmpty) {
@@ -148,9 +156,29 @@ public class Block implements ActionListener {
         return error;
     }
 
-    // TODO: setEmptyCorrect() Finds an empty square and sets it to the correct state. Can be random or first empty found.
+
+    public void setEmptyCorrect(){ // Finds the first empty Square on the GameBoard and sets it to its correct state.
+        for (Square[] sqRow : this.matrix){
+            for (Square square : sqRow){
+                if (!square.isStateCorrect()){
+                    square.setCurrentState(Square.State.TRUE);
+                }
+            }
+        }
+    }
+
 
     // TODO: displayErrors() Finds all incorrect squares and displays their error background(to be implemented).
+    public void displayErrors(){ // Finds all incorrect squares and displays their error background (Red)
+        for (Square[] sqRow : this.matrix){
+            for (Square square : sqRow){
+                if(!square.isStateCorrect()){
+                    square.setBackground(Color.RED);
+                }
+            }
+        }
+
+    }
 
     // __ ACCESSORS __
     public Square[][] getSquares() { return this.matrix;} //    returns the given matrix of Square objects

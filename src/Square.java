@@ -4,7 +4,7 @@
  *              - wrote version 1.0 of the class and added documentation
  * 2/18 [chris] - minor alterations to properly initialize Squares
  * 2/19 [chris] - Updated documentation to reflect changes
- * 2/20 [Andrew] - Updated class with comments for each method provided
+ * 2/20 [Andrew] - Updated class with comments for each method provided & adjusted methods
  */
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class Square extends JButton {
     private Image[] images;
 
     // __ CONSTRUCTORS __
-    public Square() { //    default constuctor
+    public Square() { //    default constructor
         rowIndex = 0;
         colIndex = 0;
         currentState = State.EMPTY;

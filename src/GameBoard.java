@@ -66,7 +66,7 @@ public class GameBoard {
 
     // GameBoard is our Block handler and should have to be used whenever LogicGame needs Block access.
     public ArrayList<Integer> getErrorIndices(boolean includeEmpty) {
-        for () {
+        //for () {
 
         }
     }
