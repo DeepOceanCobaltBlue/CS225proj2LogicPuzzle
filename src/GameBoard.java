@@ -9,6 +9,7 @@
  *               -added more documentation (comments)
  * 2/21 [phoenix] - created hint related methods
  *                - added comments for hint related methods
+ *                - small formatting edits
  */
 
 import javax.swing.*;
@@ -57,7 +58,7 @@ public class GameBoard {
      * @param includeEmpty Indicates whether empty blocks should be included as an error.
      * @return An ArrayList of Integers. The indices for each block with an error.
      */
-    public ArrayList<Integer> getErrorBlockIndices(boolean includeEmpty) {
+    public ArrayList<Integer> getErrorIndices(boolean includeEmpty) {
         ArrayList<Integer> errorIndices = new ArrayList<Integer>();
 
         for (int i = 0; i < 3; i++) {
@@ -91,7 +92,7 @@ public class GameBoard {
      * Calls setEmptyCorrect on a random block with the indicated indices
      * @param errorIndices Contains the indices for each Block in the 2D array 'blocks' with an error.
      */
-    public void showSquareInBlock(ArrayList<Integer> errorIndices) {
+    public void revealSquareInBlock(ArrayList<Integer> errorIndices) {
         int randIndex = (int)(Math.random() * errorIndices.size());
         blocks[(errorIndices.get(randIndex)/2)%2][errorIndices.get(randIndex)%2].setEmptyCorrect();
     }

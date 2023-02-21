@@ -10,6 +10,7 @@
  * 2/21 [Andrew] - Updated class with more methods to display user errors and the proper graphic to match
  *
  * 2/21 [phoenix] - edited hint related methods
+ *                - small formatting edits
  * 2/21 [chris]   - added highlightedSquares reset functionality
  */
 
@@ -132,7 +133,7 @@ public class Block implements ActionListener {
      */
     private void changeSquareToOrFromTrue(Square clickedSquare, Square.State neighborState, Square.State clickedState) {
         int row = clickedSquare.getRowIndex();
-        int col = clickedSquare.getColIndex();
+        int col = clickedSquare.getColumnIndex();
 
         /* set each square in clickedSquares row to FALSE */
         for(int a = 0; a < matrix.length; a++) {
@@ -201,22 +202,22 @@ public class Block implements ActionListener {
 
     }
 
-    // __ MUTATORS __
-
-
-    public void setClickable(boolean clickable) {
-        this.clickable = clickable;
-    }
 
     // __ ACCESSORS __
     public Square[][] getSquares() { return this.matrix;} //    returns the given matrix of Square objects
     public String getBlockRowTitle() { return this.blockRowTitle;} //   returns the name of the row the Square is in
-    public String getBlockColTitle() { return this.blockColTitle;} //   returns the name of the column the Square is in
+    public String getBlockColumnTitle() { return this.blockColTitle;} //   returns the name of the column the Square is in
     public String[] getRowTitles() { return this.rowTitles;} //   returns the names of the rows that the Squares are in
     public String[] getColumnTitles() { return this.columnTitles;} //   returns the names of the columns that the Squares are in
     public Component getSquare(int a, int b) {
         return matrix[a][b];
     } //    returns the matrix placement of a requested Square
+
+    // __ MUTATORS __
+    public void setClickable(boolean clickable) {
+        this.clickable = clickable;
+    }
+
 
     // __ OVERRIDES __
 

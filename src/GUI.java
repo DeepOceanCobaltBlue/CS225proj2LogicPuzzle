@@ -7,6 +7,8 @@
  * 2/20 [chris] - added menu
  *              - added leaderboard
  *              - added more game files( game2, game3, game4)
+ * 2/21 [phoenix] - error dialog functionality added
+ *                - small formatting edits
  */
 
 import javax.imageio.ImageIO;
@@ -46,9 +48,10 @@ public class GUI implements ActionListener{
     private JPanel menuRootPane;
     private JPanel gameRootPane;
     private JPanel gameCreationRootPane;
+    private JDialog errorDialog;
     private JTextArea feedbackTextArea;
     private JTextArea errorTextArea;
-    private JDialog errorDialog;
+
 
 
     // __ CONSTRUCTORS __
@@ -523,7 +526,7 @@ public class GUI implements ActionListener{
         /* Subject Title */
         JPanel subPanelOne = new JPanel(new FlowLayout(FlowLayout.CENTER));
         subPanelOne.setBorder(new LineBorder(Color.BLACK));
-        JLabel categoryLabel = new JLabel(block.getBlockColTitle());
+        JLabel categoryLabel = new JLabel(block.getBlockColumnTitle());
         subPanelOne.add(categoryLabel);
         basePanel.add(subPanelOne);
 
@@ -616,15 +619,6 @@ public class GUI implements ActionListener{
     public JFrame getDisplay() {
         return rootFrame;
     }
-    // __ MUTATORS __
-    public void setGameBoard(GameBoard gameBoard) {
-        this.gameBoard = gameBoard;
-        this.blocks = gameBoard.getBlocks();
-        createGameInterface();
-    }
-    public void setControls(JButton[] functionButtons) {
-        this.controls = functionButtons;
-    }
 
     private JTextArea getInfoPanel(JButton button) {
         /* Get infoPanel components */
@@ -638,6 +632,18 @@ public class GUI implements ActionListener{
         return (JTextArea) infoPanel.getComponent(1);
     }
 
+    // __ MUTATORS __
+    public void setGameBoard(GameBoard gameBoard) {
+        this.gameBoard = gameBoard;
+        this.blocks = gameBoard.getBlocks();
+        createGameInterface();
+    }
+    public void setControls(JButton[] functionButtons) {
+        this.controls = functionButtons;
+    }
+    public void setFeedbackTAText(String input){
+        this.feedbackTextArea.setText(input);
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
@@ -689,9 +695,7 @@ public class GUI implements ActionListener{
     }
 
 
-    public void setFeedbackTAText(String input){
-        this.feedbackTextArea.setText(input);
-    }
+
 
     /**
      * creates a new game file from inputs on game creation window.

@@ -91,17 +91,19 @@ public class Square extends JButton {
     public State getCorrectState() {
         return correctState;
     } //    retrieves the correct state of the selected Square
-    public void setCurrentState(State newState) { //    sets the state of the selected Square
-        this.currentState = newState;
-        setDisplay(this.currentState);
-    }
     public int getRowIndex() {
         return rowIndex;
     } //    retrieves the row the selected Square is in
-    public int getColIndex() {
+    public int getColumnIndex() {
         return colIndex;
     } //    retrieves the column the selected Square is in
     public void setImages(Image[] images) {
         this.images = images;
     } //    sets the image of the selected Square
+
+    // __ MUTATORS __
+    public void setCurrentState(State newState) { //    sets the state of the selected Square
+        this.currentState = newState;
+        setDisplay(this.currentState);
+    }
 }

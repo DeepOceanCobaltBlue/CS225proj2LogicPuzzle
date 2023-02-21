@@ -23,6 +23,7 @@
  * 2/21 [Andrew] - updated class with documentation and overall cleanup
  * 2/21 [phoenix] - Finished hint system
  *                - Finished file error system
+ *                - small formatting edits
  */
 
 import javax.swing.*;
@@ -48,7 +49,7 @@ public class LogicGameThreeByFour implements ActionListener {
     private Timer timer;
     private boolean runClock;
     /* Using the Hint feature penalizes the players total time */
-    private long penaltyTime;
+    private int penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
 
@@ -187,14 +188,14 @@ public class LogicGameThreeByFour implements ActionListener {
      * Reveal an unrevealed or incorrect TRUE square
      */
     private void giveHint() {
-        ArrayList<Integer> errBlockIndices = gameBoard.getErrorBlockIndices(false);
+        ArrayList<Integer> errBlockIndices = gameBoard.getErrorIndices(false);
 
         if (errBlockIndices.size() > 0) {
             gameBoard.showAllErrors(errBlockIndices);
         } else {
-            errBlockIndices = gameBoard.getErrorBlockIndices(true);
+            errBlockIndices = gameBoard.getErrorIndices(true);
             if (errBlockIndices.size() > 0) {
-                gameBoard.showSquareInBlock(errBlockIndices);
+                gameBoard.revealSquareInBlock(errBlockIndices);
             } else {
                 gui.setFeedbackTAText("Just Submit");
             }
@@ -245,7 +246,7 @@ public class LogicGameThreeByFour implements ActionListener {
 
         switch (clicked.getText()) {
             case "Submit":
-                boolean win = gameBoard.getErrorBlockIndices(true).size() == 0;
+                boolean win = gameBoard.getErrorIndices(true).size() == 0;
                 runClock = false; // do not allow timer to run
                 clock(); // stop timer
                 gui.setFeedbackTAText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
@@ -296,16 +297,22 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     // __ ACCESSORS __
-    public long getCurrentTime() { //   returns the time on the stopwatch
-        return currentTime;
-    }
     public GUI getGUI() { //    returns the current GUI object
         return gui;
     }
     public GameBoard getGameBoard() { //    returns the current GameBoard object
         return gameBoard;
     }
-    public long getPenaltyTime() { //   returns the penaltyTimer recorded by the stopwatch
+    public int getCurrentTime() { //   returns the time on the stopwatch
+        return currentTime;
+    }
+    public int getPenaltyTime() { //   returns the penaltyTimer recorded by the stopwatch
         return penaltyTime;
+    }
+    public JButton[] getFunctionButtons() {
+        return functionButtons;
+    }
+    public Timer getTimer() {
+        return timer;
     }
 }
