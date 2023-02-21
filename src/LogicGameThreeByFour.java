@@ -19,9 +19,8 @@
  *
  * 2/19 [phoenix] - small tweaks and moved most of findIncorrectBlocks() functionality to Block
  *                - moved functionality from abstract class
- * 2/20 [Andrew]  -Added comments and more documentation on the class file
+ * 2/20 [chris]   - refactored some methods to accommodate new code for new GUI items
  */
-
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -35,17 +34,14 @@ import java.util.Scanner;
  * - Handle game file I/O
  * - initialize game board
  * - launch game window
- * - handle control panel functions
- *   - hints, submit answers [new game, loading game boards]
+ * - handle functions from buttons that change the state of the application
  */
 public class LogicGameThreeByFour implements ActionListener {
     // __ ATTRIBUTES __
     private GUI gui;
     private GameBoard gameBoard;
     /* Tracks the total time a player spends on a puzzle */
-    private long startTime;
-    private long endTime;
-    /* Tracks to total time the player has spent on the current game */
+    private int currentTime;
     private Timer timer;
     private boolean runClock;
     /* Using the Hint feature penalizes the players total time */
@@ -55,9 +51,8 @@ public class LogicGameThreeByFour implements ActionListener {
 
 
     // __ CONSTRUCTORS __
-    public LogicGameThreeByFour() { //  default constructor
-        this.startTime = 0;
-        this.endTime = 0;
+    public LogicGameThreeByFour() {
+        this.currentTime = 0;
         this.penaltyTime = 0;
         this.timer = new Timer(0, null);
         this.runClock = false;
@@ -66,20 +61,6 @@ public class LogicGameThreeByFour implements ActionListener {
         createButtons();
         this.gui = new GUI(functionButtons);
     }
-
-    /* TODO: filepath comes from popup window now
-    public LogicGameThreeByFour(String filepath) { //   constructor with arguments
-        this.startTime = 0;
-        this.endTime = 0;
-        this.penaltyTime = 0;
-        this.timer = new Timer(0, null);
-        this.runClock = false;
-        this.functionButtons = new JButton[5];
-        this.gameBoard = null;
-        createButtons();
-        this.gui = new GUI(functionButtons);
-    }
-     */
 
     // __ FUNCTIONS __
 
@@ -89,9 +70,9 @@ public class LogicGameThreeByFour implements ActionListener {
     private void clock() {
         if(runClock) {
             timer = new Timer(1000, e -> {
-                long timeSeconds = (int)((System.currentTimeMillis() - getStartTime())/1000);
+                currentTime += 1;
                 String time = "Time: ";
-                time = time.concat(String.valueOf(timeSeconds));
+                time = time.concat(String.valueOf(currentTime));
                 time = time.concat(" Seconds");
 
                 gui.updateClock(time);
@@ -108,75 +89,75 @@ public class LogicGameThreeByFour implements ActionListener {
      * Extract and initialize game assets from game file
      * @param inputFile - the game file text document to read
      */
-    private boolean fileReader(File inputFile) {
-        if(inputFile == null) {
-            return false;
-        }
-        Scanner reader;
+    private void fileReader(File inputFile) throws FileNotFoundException, NullPointerException{
+        Scanner reader = null;
         try {
             reader = new Scanner(inputFile);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+            Block[][] blocks = new Block[2][2];
+            String story = null;
+            String[] clues = null;
+            String[] answer = null;
+            /* Read in all text from Game File to initialize block objects and gameBoard */
+            while(reader.hasNext()) {
 
-        Block[][] blocks = new Block[2][2];
-        String story = null;
-        String[] clues = null;
-        String[] answer = null;
-        /* Read in all text from Game File to initialize block objects and gameBoard */
-        while(reader.hasNext()) {
+                String inputLine = reader.nextLine();
+                switch(inputLine) {
+                    case "BLOCKS":
+                        for(int i = 0; i < 3; i++) {
+                            String rowTitle = reader.nextLine();
+                            String[] rowTitles = reader.nextLine().split(",");
+                            String columnTitle = reader.nextLine();
+                            String[] colTitles = reader.nextLine().split(",");
+                            String trueRows = reader.nextLine();
 
-            String inputLine = reader.nextLine();
-            switch(inputLine) {
-                case "BLOCKS":
-                    for(int i = 0; i < 3; i++) {
-                        String rowTitle = reader.nextLine();
-                        String[] rowTitles = reader.nextLine().split(",");
-                        String columnTitle = reader.nextLine();
-                        String[] colTitles = reader.nextLine().split(",");
-                        String trueRows = reader.nextLine();
-
-                        switch (i) {
-                            case 0:
-                                blocks[0][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
-                                break;
-                            case 1:
-                                blocks[0][1] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
-                                break;
-                            case 2:
-                                blocks[1][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
-                                break;
+                            switch (i) {
+                                case 0:
+                                    blocks[0][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
+                                    break;
+                                case 1:
+                                    blocks[0][1] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
+                                    break;
+                                case 2:
+                                    blocks[1][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
+                                    break;
+                            }
                         }
-                    }
 
-                    break;
-                case "CLUES":
-                    String allClues = "";
-                    String nextClue = reader.nextLine();
-                    while(!(nextClue.equals("STORY"))) {
-                        allClues = allClues.concat(nextClue);
-                        allClues = allClues.concat(",");
-                        nextClue = reader.nextLine();
-                    }
-                    clues = allClues.split(",");
-                    /* STORY title was just read */
-                    story = reader.nextLine();
-                    break;
-                case "ANSWER":
-                    String allAnswers = "";
-                    String nextAnswer = reader.nextLine();
-                    while(!(nextAnswer.equals("END"))) {
-                        allAnswers = allAnswers.concat(nextAnswer);
-                        allAnswers = allAnswers.concat(",");
-                        nextAnswer = reader.nextLine();
-                    }
-                    answer = allAnswers.split(",");
-                    break;
+                        break;
+                    case "CLUES":
+                        String allClues = "";
+                        String nextClue = reader.nextLine();
+                        while(!(nextClue.equals("STORY"))) {
+                            allClues = allClues.concat(nextClue);
+                            allClues = allClues.concat(",");
+                            nextClue = reader.nextLine();
+                        }
+                        clues = allClues.split(",");
+                        /* STORY title was just read */
+                        story = reader.nextLine();
+                        break;
+                    case "ANSWER":
+                        String allAnswers = "";
+                        String nextAnswer = reader.nextLine();
+                        while(!(nextAnswer.equals("END"))) {
+                            allAnswers = allAnswers.concat(nextAnswer);
+                            allAnswers = allAnswers.concat(",");
+                            nextAnswer = reader.nextLine();
+                        }
+                        answer = allAnswers.split(",");
+                        break;
+                }
+            }
+
+            this.setGameBoard(new GameBoard(clues, answer, story, blocks));
+            createButtons();
+        } finally {
+            if (reader != null) {
+                reader.close();
             }
         }
-        this.setGameBoard(new GameBoard(clues, answer, story, blocks));
-        createButtons();
-        return true;
+
+
     }
 
     /**
@@ -237,11 +218,8 @@ public class LogicGameThreeByFour implements ActionListener {
      * Reveal an unrevealed or incorrect TRUE square
      */
     private void giveHint() {
-        ArrayList<Block> incBlock;
-        /* TODO: implement
-           - cycle through Square to find a TRUE square that is EMPTY or FALSE
-           - set the first Square found to TRUE
-        */
+        /*ArrayList<Block> incBlock;
+
         incBlock = findIncorrectBlocks(false);
         if (incBlock.size() > 0) {
             // TODO: currentBlock.displayError();
@@ -253,7 +231,19 @@ public class LogicGameThreeByFour implements ActionListener {
             } else {
                 // User Has perfect board
             }
+        }*/
+        // ArrayList<Integer> errBlockIndices = gameboard.getErrorIndexes(false);
+        if (true/*errBlockIndices.size > 0*/) {
+            //gameBoard.showErrors(errBlockIndices);
+        } else {
+            // errBlockIndices = gameboard.getErrorIndexes(true);
+            if (true/*errBlockIndices.size > 0*/) {
+                // gameboard.showSquare(errBlockIndices);
+            } else {
+                // gui.setInfoText("Just Submit");
+            }
         }
+
     }
 
 
@@ -295,12 +285,19 @@ public class LogicGameThreeByFour implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton pressedButton = (JButton) e.getSource();
-        switch (pressedButton.getText()) {
+        JButton clicked = (JButton) e.getSource();
+
+        switch (clicked.getText()) {
             case "Submit":
-                boolean win = findIncorrectBlocks(true).size() > 0;
+                boolean win;
                 runClock = false; // do not allow timer to run
                 clock(); // stop timer
+                if(findIncorrectBlocks(true).size() > 0) {
+                    win = true;
+                }
+                else {
+                    win = false;
+                }
                 /*gui.setInfoArea("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
                         (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.
                         \nYour total time is " + (currentTime+penaltyTime) : "There were " + findIncorrectBlocks(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");*/
@@ -309,15 +306,20 @@ public class LogicGameThreeByFour implements ActionListener {
                 giveHint();
                 break;
             case "Start Game":
-                if(fileReader(importGameBoard())) { // get game file and initialize game board
+                try {
+                    fileReader(importGameBoard());// get game file and initialize game board
                     this.gui.setGameBoard(this.gameBoard); // creates game interface and switches display to game
                     this.gui.switchWindow("Game");
                     this.gui.getDisplay().revalidate();
                     this.gui.getDisplay().repaint();
-                    startTime = System.currentTimeMillis();
-                    // TODO: We can add a start button and have the gameboard initially disabled and clues hidden
+                    currentTime = 0;
                     runClock = true; // allow timer to begin
                     clock(); // start timer
+                } catch (NullPointerException exception) {
+                    // User exited the dialog, no action required.
+                    //gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
+                } catch (FileNotFoundException exception) {
+                    //gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
                 }
                 break;
             case "Leaderboard":
@@ -334,31 +336,22 @@ public class LogicGameThreeByFour implements ActionListener {
     // __ MUTATORS __
     public void setGUI(GUI gui) {
         this.gui = gui;
-    } //    sets the GUI for play
+    }
     public void setGameBoard(GameBoard gameBoard) {
         this.gameBoard = gameBoard;
-    } //    sets the Gameboard for play
+    }
 
     // __ ACCESSORS __
-
-    //time methods
-    public long getStartTime() {
-        return startTime;
-    } //    returns the start time of the game
-    public long getEndTime() {
-        return endTime;
-    } //    returns the end time of the game
-    public long getPenaltyTime() {
-        return penaltyTime;
-    } //    returns the penalty time of the current game
-
-
+    public long getCurrentTime() {
+        return currentTime;
+    }
     public GUI getGUI() {
         return gui;
-    } //    returns the current GUI layout of the game
+    }
     public GameBoard getGameBoard() {
         return gameBoard;
-    } //    returns the current state of Gameboard in the game
-
-
+    }
+    public long getPenaltyTime() {
+        return penaltyTime;
+    }
 }
