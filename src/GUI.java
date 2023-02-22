@@ -9,6 +9,7 @@
  *              - added more game files( game2, game3, game4)
  * 2/21 [phoenix] - error dialog functionality added
  *                - small formatting edits
+ *                - error checking for board creation
  */
 
 import javax.imageio.ImageIO;
@@ -685,7 +686,13 @@ public class GUI implements ActionListener{
                 ta.setText(text);
                 break;
             case "Create": // create a new game file from data input into game creation window
-                createGameFile();
+                try {
+                    createGameFile();
+                } catch (IOException exception) {
+                    displayError("There was an issue creating your file. Please ensure your entry is properly formatted.");
+                } catch (NullPointerException exception) {
+                    displayError("There was an issue creating your file. Please ensure every field is filled out.");
+                }
                 break;
             case "Cancel": // cancel creating a new game file
                 switchWindow("Menu");
@@ -701,25 +708,17 @@ public class GUI implements ActionListener{
      * creates a new game file from inputs on game creation window.
      * no protection or error checking.
      */
-    private void createGameFile() {
+    private void createGameFile() throws IOException, NullPointerException {
         File directory = new File("Game files");
         int count = directory.listFiles().length;
         String filepath = ("Game" + (count + 1));
         File newGameFile = new File(filepath);
+        PrintWriter pw = null;
+
         try {
             newGameFile.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        PrintWriter pw;
-        try {
             pw = new PrintWriter(newGameFile);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
 
-        if(pw != null) {
             JPanel inputComponents = (JPanel) this.gameCreationRootPane.getComponent(1); // input panel
 
             /* Component hierarchy
@@ -772,15 +771,15 @@ public class GUI implements ActionListener{
             /* Block 1 */
             blockRowTitle = subjectTextAreaInputs[0];   // CAT 1 subject TITLE
             rowTitlesStr = ( subjectTextAreaInputs[3] + "," + // Cat 1 row titles
-                                    subjectTextAreaInputs[6] + "," +
-                                    subjectTextAreaInputs[9] + "," +
-                                    subjectTextAreaInputs[12]);
+                    subjectTextAreaInputs[6] + "," +
+                    subjectTextAreaInputs[9] + "," +
+                    subjectTextAreaInputs[12]);
 
             blockColTitle = subjectTextAreaInputs[1];   // CAT 2 subject TITLE
             colTitlesStr = ( subjectTextAreaInputs[4] + "," + // Cat 1 col titles
-                                    subjectTextAreaInputs[7] + "," +
-                                    subjectTextAreaInputs[10] + "," +
-                                    subjectTextAreaInputs[13]);
+                    subjectTextAreaInputs[7] + "," +
+                    subjectTextAreaInputs[10] + "," +
+                    subjectTextAreaInputs[13]);
             // BLOCK 1 TRUE ROW
             pw.write("BLOCKS");
 
@@ -793,15 +792,15 @@ public class GUI implements ActionListener{
             /* Block 2 */
             blockRowTitle = subjectTextAreaInputs[0];// CAT 1 ROW TITLE
             rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
-                                subjectTextAreaInputs[6] + "," +
-                                subjectTextAreaInputs[9] + "," +
-                                subjectTextAreaInputs[12]);
+                    subjectTextAreaInputs[6] + "," +
+                    subjectTextAreaInputs[9] + "," +
+                    subjectTextAreaInputs[12]);
 
             blockColTitle = subjectTextAreaInputs[2];// CAT 3 COL TITLE
             colTitlesStr = (    subjectTextAreaInputs[5] + "," + // Cat 3 col titles
-                                subjectTextAreaInputs[8] + "," +
-                                subjectTextAreaInputs[11] + "," +
-                                subjectTextAreaInputs[14]);
+                    subjectTextAreaInputs[8] + "," +
+                    subjectTextAreaInputs[11] + "," +
+                    subjectTextAreaInputs[14]);
             // BLOCK 2 TRUE ROW
 
             pw.write(blockRowTitle);
@@ -813,15 +812,15 @@ public class GUI implements ActionListener{
             /* Block 3 */
             blockRowTitle = subjectTextAreaInputs[2];// CAT 3 ROW TITLE
             rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
-                                subjectTextAreaInputs[6] + "," +
-                                subjectTextAreaInputs[9] + "," +
-                                subjectTextAreaInputs[12]);
+                    subjectTextAreaInputs[6] + "," +
+                    subjectTextAreaInputs[9] + "," +
+                    subjectTextAreaInputs[12]);
 
             blockColTitle = subjectTextAreaInputs[1];// CAT 2 COL TITLE
             colTitlesStr = (    subjectTextAreaInputs[4] + "," + // Cat 1 col titles
-                                subjectTextAreaInputs[7] + "," +
-                                subjectTextAreaInputs[10] + "," +
-                                subjectTextAreaInputs[13]);
+                    subjectTextAreaInputs[7] + "," +
+                    subjectTextAreaInputs[10] + "," +
+                    subjectTextAreaInputs[13]);
             // BLOCK 3 TURE ROWS
             pw.write(blockRowTitle);
             pw.write(rowTitlesStr);
@@ -853,6 +852,10 @@ public class GUI implements ActionListener{
             answer[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
             answer[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
             pw.write("END");
+        } finally {
+            if (pw != null) {
+                pw.close();
+            }
         }
     }
 }
