@@ -9,6 +9,7 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 /** This class represents an individual junction between two categories within the game.
  * every square has a position within a 4x4 matrix which is managed by the parent 'Block'.
@@ -28,7 +29,7 @@ public class Square extends JButton {
     /* Row index value of square within parent 'Block' */
     private int rowIndex;
     /* Column index value of square within parent 'Block' */
-    private int colIndex;
+    private int columnIndex;
     /* What state has the user set this square to */
     private State currentState;
     /* The intended state in accordance with the imported game board */
@@ -39,7 +40,7 @@ public class Square extends JButton {
     // __ CONSTRUCTORS __
     public Square() { //    default constructor
         rowIndex = 0;
-        colIndex = 0;
+        columnIndex = 0;
         currentState = State.EMPTY;
         correctState = State.EMPTY;
         this.setPreferredSize(new Dimension(30, 30));
@@ -48,13 +49,13 @@ public class Square extends JButton {
 
     /**
      * @param rowIndex - index for the row housing this square
-     * @param colIndex - index for the column housing this square
+     * @param columnIndex - index for the column housing this square
      * @param correctState - EMPTY, TRUE, FALSE: retrieved from game file
      */
-    public Square(int rowIndex, int colIndex, State correctState) { //  constructor with parameters
+    public Square(int rowIndex, int columnIndex, State correctState) { //  constructor with parameters
         this();
         this.rowIndex = rowIndex;
-        this.colIndex = colIndex;
+        this.columnIndex = columnIndex;
         this.correctState = correctState;
     }
 
@@ -95,15 +96,38 @@ public class Square extends JButton {
         return rowIndex;
     } //    retrieves the row the selected Square is in
     public int getColumnIndex() {
-        return colIndex;
+        return columnIndex;
     } //    retrieves the column the selected Square is in
-    public void setImages(Image[] images) {
-        this.images = images;
-    } //    sets the image of the selected Square
+
+    public Image[] getImages() { return images;} //     retrieves the images this square can display
 
     // __ MUTATORS __
     public void setCurrentState(State newState) { //    sets the state of the selected Square
         this.currentState = newState;
         setDisplay(this.currentState);
+    }
+    public void setImages(Image[] images) {
+        this.images = images;
+    } //    sets the image of the selected Square
+
+    @Override
+    public String toString() {
+        return "Column Index: " + columnIndex + ", row index:" + rowIndex + ", current state: " + currentState +
+                ", correct state " + correctState;
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() == this.getClass()) {
+            Square square = (Square) obj;
+            // Images not included as that will be checked in Square.
+            return rowIndex == square.getRowIndex() && columnIndex == square.getColumnIndex() &&
+                    currentState.equals(square.currentState) && correctState.equals(square.correctState) &&
+                    Arrays.equals(images, square.getImages());
+        }
+        return false;
     }
 }

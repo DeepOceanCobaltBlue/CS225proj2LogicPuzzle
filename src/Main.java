@@ -11,5 +11,6 @@ public class Main {
     public static void main(String[] args) {
         LogicGameThreeByFour game = new LogicGameThreeByFour(); //  creating a new instance of the game
         game.play(); // executing the game for user to play
+
     }
 }

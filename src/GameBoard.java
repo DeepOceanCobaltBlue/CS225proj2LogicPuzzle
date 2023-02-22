@@ -14,6 +14,7 @@
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /** Data structure for Logic Game assets
  * Contains all the textual information necessary to present to the player. Also
@@ -110,6 +111,24 @@ public class GameBoard {
             }
         }
     }
+    // __ OVERRIDE __
+    @Override
+    public String toString() {
+        return "Clues: " + Arrays.toString(clues) + ",\nstory: " + story + ",\nblocks" + Arrays.deepToString(blocks) +
+                ",\nanswers: " + Arrays.toString(answers) + ",\ncontrols: " + Arrays.toString(controls) + ",\nnotes: " + notes;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() == this.getClass()) {
+            GameBoard gameBoard = (GameBoard) obj;
+            return Arrays.equals(clues, gameBoard.getClues()) && story.equals(gameBoard.story) && Arrays.deepEquals(blocks, gameBoard.getBlocks()) &&
+                    Arrays.equals(answers, getAnswers()) && Arrays.equals(controls, gameBoard.controls) && notes.equals(gameBoard.getNotes());
+        }
+        return false;
+    }
 
     // __ ACCESSORS __
     public String[] getClues(){
@@ -140,5 +159,6 @@ public class GameBoard {
     public void setControls(JButton[] controls) {
         this.controls = controls;
     } // sets the JButton controls to match the controls set here
+
 
 }

@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class represents a 4x4 matrix of 'Squares' and handles interactions
@@ -33,7 +34,7 @@ public class Block implements ActionListener {
     /* Subject title for row titles */
     private String blockRowTitle;
     /* Subject title for column titles */
-    private String blockColTitle;
+    private String blockColumnTitle;
     /* Subject title for each row */
     private String[] rowTitles;
     /* Subject title for each column */
@@ -41,7 +42,7 @@ public class Block implements ActionListener {
 
     /* images displayed on individual Squares to display currentState */
     /* [0] = FALSE, [1] = TRUE */
-    private static Image[] images;
+    private Image[] images;
     private boolean clickable;
     private ArrayList<Square> highlightedSquares;
 
@@ -49,7 +50,7 @@ public class Block implements ActionListener {
     public Block() { // default constructor
         matrix = new Square[4][4];
         blockRowTitle = null;
-        blockColTitle  = null;
+        blockColumnTitle  = null;
         rowTitles = new String[4];
         columnTitles = new String[4];
         clickable = true;
@@ -67,7 +68,7 @@ public class Block implements ActionListener {
     public Block(String rowTitle, String[] rowTitles, String columnTitle, String[] columnTitles, String order) { // constructor with arguments
         this();
         this.blockRowTitle = rowTitle;
-        this.blockColTitle = columnTitle;
+        this.blockColumnTitle = columnTitle;
         this.rowTitles = rowTitles;
         this.columnTitles = columnTitles;
         this.highlightedSquares = new ArrayList<>();
@@ -206,12 +207,19 @@ public class Block implements ActionListener {
     // __ ACCESSORS __
     public Square[][] getSquares() { return this.matrix;} //    returns the given matrix of Square objects
     public String getBlockRowTitle() { return this.blockRowTitle;} //   returns the name of the row the Square is in
-    public String getBlockColumnTitle() { return this.blockColTitle;} //   returns the name of the column the Square is in
+    public String getBlockColumnTitle() { return this.blockColumnTitle;} //   returns the name of the column the Square is in
     public String[] getRowTitles() { return this.rowTitles;} //   returns the names of the rows that the Squares are in
     public String[] getColumnTitles() { return this.columnTitles;} //   returns the names of the columns that the Squares are in
     public Component getSquare(int a, int b) {
         return matrix[a][b];
     } //    returns the matrix placement of a requested Square
+
+    public Image[] getImages() {return images;} //  returns the array of images used for squares
+
+    public ArrayList<Square> getHighlightedSquares() { return highlightedSquares;} //   returns the Squares which are currently highlighted
+
+    public boolean getClickable() { return this.clickable;} //   returns whether the block can be clicked
+
 
     // __ MUTATORS __
     public void setClickable(boolean clickable) {
@@ -251,6 +259,27 @@ public class Block implements ActionListener {
                     break;
             }
         }
+    }
+    @Override
+    public String toString() {
+        return "Column title of Block: " + blockColumnTitle + ", row title of Block:" + blockRowTitle + ", clickable: " +
+                clickable + ",\ncolumn titles of Squares: " + Arrays.toString(columnTitles) + ",\nrow titles of Squares: " +
+                Arrays.toString(rowTitles) + ",\nmatrix: " + Arrays.deepToString(matrix);
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() == this.getClass()) {
+            Block block = (Block) obj;
+            return blockColumnTitle.equals(block.getBlockColumnTitle()) && blockRowTitle.equals(block.getBlockRowTitle()) &&
+                    clickable == block.getClickable() && Arrays.deepEquals(matrix, block.getSquares()) &&
+                    Arrays.equals(columnTitles, block.getColumnTitles()) && Arrays.equals(rowTitles, block.getRowTitles()) &&
+                    Arrays.equals(images, block.getImages()) && highlightedSquares.equals(block.getHighlightedSquares());
+        }
+        return false;
     }
 
 }
