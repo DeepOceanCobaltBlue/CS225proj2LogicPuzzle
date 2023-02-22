@@ -254,7 +254,7 @@ public class LogicGameThreeByFour implements ActionListener {
             case "Submit":
                 boolean win = gameBoard.getErrorIndices(true).size() == 0;
                 runClock = false; // do not allow timer to run
-                float finalTime = (currentTime + penaltyTime)/60;
+                int finalTime = (currentTime + penaltyTime)/60;
                 clock(); // stop timer
                 gui.setFeedbackTAText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
                         (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.\nYour total time is " +
