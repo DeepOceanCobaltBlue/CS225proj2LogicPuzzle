@@ -4,7 +4,10 @@
  *              - wrote version 1.0 of the class and added documentation
  * 2/18 [chris] - minor alterations to properly initialize Squares
  * 2/19 [chris] - Updated documentation to reflect changes
- * 2/20 [Andrew] - Updated class with comments for each method provided & adjusted methods
+ * 2/20 [Andrew] - Updated class with comments for each method provided
+ *                -updated methods to match
+ * 2/21 [Phoenix] -added toString and equals
+ * 2/21 [Andrew] - adjusted documentation
  */
 
 import javax.swing.*;
@@ -111,14 +114,14 @@ public class Square extends JButton {
     } //    sets the image of the selected Square
 
     @Override
-    public String toString() {
+    public String toString() { //   toString method to print out each attribute of this object
         return "Column Index: " + columnIndex + ", row index:" + rowIndex + ", current state: " + currentState +
                 ", correct state " + correctState;
 
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj) { //  equals method to check if two objects of the same type are identical
         if (obj == this) return true;
         if (obj == null) return false;
         if (obj.getClass() == this.getClass()) {

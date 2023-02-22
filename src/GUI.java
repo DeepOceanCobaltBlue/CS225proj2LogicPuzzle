@@ -10,6 +10,7 @@
  *                - small formatting edits
  *                - error checking for board creation
  * 2/21 [chris]   - got game file creation functionality 99% done. No time to final debug and test
+ * 2/21 [Andrew]  -edited infoTextArea with proper spacing/appearance
  */
 
 import javax.imageio.ImageIO;
@@ -661,7 +662,7 @@ public class GUI implements ActionListener{
 
                 String[] clues = gameBoard.getClues();
                 for (int a = 0; a < clues.length; a++) {
-                    text = text.concat(clues[a] + "\n");
+                    text = text.concat(clues[a] + "\n\n");
                 }
                 wasOnNotes = false;
                 ta.setEditable(false);

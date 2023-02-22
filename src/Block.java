@@ -13,6 +13,9 @@
  *                - small formatting edits
  * 2/21 [chris]   - added highlightedSquares reset functionality
  * 2/21 [Andrew] - adjusted feedback text display
+ *               - adjusted comments
+ * 2/21 [Phoenix] -added toString and equals
+ * 2/21 [Andrew] - adjusted documentation
  */
 
 import javax.imageio.ImageIO;
@@ -262,7 +265,7 @@ public class Block implements ActionListener {
         }
     }
     @Override
-    public String toString() {
+    public String toString() { //   toString method to print out each attribute of this object
         return "Column title of Block: " + blockColumnTitle + ", row title of Block:" + blockRowTitle + ", clickable: " +
                 clickable + ",\ncolumn titles of Squares: " + Arrays.toString(columnTitles) + ",\nrow titles of Squares: " +
                 Arrays.toString(rowTitles) + ",\nmatrix: " + Arrays.deepToString(matrix);
@@ -270,7 +273,7 @@ public class Block implements ActionListener {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj) { //  equals method to check if two objects of the same type are identical
         if (obj == this) return true;
         if (obj == null) return false;
         if (obj.getClass() == this.getClass()) {
