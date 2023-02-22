@@ -66,6 +66,11 @@ public class LogicGameThreeByFour implements ActionListener {
         this.gui = new GUI(functionButtons);
     }
 
+    public LogicGameThreeByFour(GameBoard gameBoard) {
+        this();
+        this.gameBoard = gameBoard;
+    }
+
     // __ FUNCTIONS __
 
     /**
@@ -261,7 +266,9 @@ public class LogicGameThreeByFour implements ActionListener {
                 break;
             case "Start Game":
                 try {
-                    fileReader(importGameBoard());// get game file and initialize game board
+                    if (gameBoard == null) {
+                        fileReader(importGameBoard());// get game file and initialize game board
+                    }
                     this.gui.setGameBoard(this.gameBoard); // creates game interface and switches display to game
                     this.gui.switchWindow("Game");
                     this.gui.getDisplay().revalidate();
