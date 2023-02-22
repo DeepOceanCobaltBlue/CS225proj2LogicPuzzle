@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 /**
  * Construct a Graphical interface for a 3x4 Logic Puzzle using GameBoard data structure.
@@ -679,7 +680,7 @@ public class GUI implements ActionListener{
     private void createGameFile() {
         File directory = new File("Game files");
         int count = directory.listFiles().length;
-        String filepath = ("Game" + (count + 1));
+        String filepath = ("Game Files\\Game" + (count + 1));
         File newGameFile = new File(filepath);
         try {
             newGameFile.createNewFile();
@@ -697,6 +698,7 @@ public class GUI implements ActionListener{
         if(pw != null) {
             JPanel inputComponents = (JPanel) this.gameCreationRootPane.getComponent(1); // input panel
 
+            // TODO: trueRows don't work (0,0,0,0)
             /* Component hierarchy
             inputComponents
                 0 - subjectPanel
@@ -722,23 +724,68 @@ public class GUI implements ActionListener{
                     0 - storyLabel
                     1 - storyInput
              */
+
+
+            // The Index of the array is the column index
+            // of the TRUE Square and the value stored at that
+            // index is the row index of the TRUE Square.
+            String[] trueRows = new String[3];
+            trueRows[0] = "";
+            trueRows[1] = "";
+            trueRows[2] = "";
+
             /* Get Answer Information */
             JPanel aPanel = (JPanel) inputComponents.getComponent(2);
             JPanel taAnswerPanel = (JPanel) aPanel.getComponent(2);
             String[] answerTextAreaInputs = new String[12];
+
+
             for(int i = 0; i < answerTextAreaInputs.length; i++) {
                 answerTextAreaInputs[i] = ((JTextArea)taAnswerPanel.getComponent(i)).getText();
             }
-            String[] trueRows = new String[4];
+
+
 
 
             /* get Blocks information */
             JPanel sPanel = (JPanel) inputComponents.getComponent(0);
             JPanel taSubjectPanel = (JPanel) sPanel.getComponent(2);
             String[] subjectTextAreaInputs = new String[15];
+
+            /* Associate category row text with index value */
+            HashMap<String, Integer> subjectIndexMap = new HashMap<>();
+            HashMap<String, String> c1c2Map = new HashMap<>();
+            HashMap<String, String> c1c3Map = new HashMap<>();
+            HashMap<String, String> c3c2Map = new HashMap<>();
+            // associate subject names with their index values
+            int row = 0;
             for(int i = 0; i < subjectTextAreaInputs.length; i++) {
                 subjectTextAreaInputs[i] = ((JTextArea)taSubjectPanel.getComponent(i)).getText();
+                if(i > 2) { // skip category titles
+                    if((i % 3) == 0) {
+                        row++;
+                    }
+                    subjectIndexMap.put(subjectTextAreaInputs[i], row);
+                }
             }
+            // init c1 c2 map associate column text with row text, row text is returned
+            // when .get is called on column text
+            c1c2Map.put(answerTextAreaInputs[1], answerTextAreaInputs[0] );
+            c1c2Map.put(answerTextAreaInputs[4], answerTextAreaInputs[3] );
+            c1c2Map.put(answerTextAreaInputs[7], answerTextAreaInputs[6] );
+            c1c2Map.put(answerTextAreaInputs[10], answerTextAreaInputs[9] );
+            // init c1, map  c
+            c1c3Map.put(answerTextAreaInputs[2], answerTextAreaInputs[0] );
+            c1c3Map.put(answerTextAreaInputs[5], answerTextAreaInputs[3] );
+            c1c3Map.put(answerTextAreaInputs[8], answerTextAreaInputs[6] );
+            c1c3Map.put(answerTextAreaInputs[11], answerTextAreaInputs[9] );
+            // init c3, map  c
+            c3c2Map.put(answerTextAreaInputs[1], answerTextAreaInputs[2] );
+            c3c2Map.put(answerTextAreaInputs[4], answerTextAreaInputs[5] );
+            c3c2Map.put(answerTextAreaInputs[7], answerTextAreaInputs[8] );
+            c3c2Map.put(answerTextAreaInputs[10], answerTextAreaInputs[11]);
+
+
             String blockRowTitle;
             String rowTitlesStr;
             String blockColTitle;
@@ -747,23 +794,43 @@ public class GUI implements ActionListener{
             /* Block 1 */
             blockRowTitle = subjectTextAreaInputs[0];   // CAT 1 subject TITLE
             rowTitlesStr = ( subjectTextAreaInputs[3] + "," + // Cat 1 row titles
-                                    subjectTextAreaInputs[6] + "," +
-                                    subjectTextAreaInputs[9] + "," +
-                                    subjectTextAreaInputs[12]);
+                            subjectTextAreaInputs[6] + "," +
+                            subjectTextAreaInputs[9] + "," +
+                            subjectTextAreaInputs[12]);
 
             blockColTitle = subjectTextAreaInputs[1];   // CAT 2 subject TITLE
             colTitlesStr = ( subjectTextAreaInputs[4] + "," + // Cat 1 col titles
-                                    subjectTextAreaInputs[7] + "," +
-                                    subjectTextAreaInputs[10] + "," +
-                                    subjectTextAreaInputs[13]);
+                            subjectTextAreaInputs[7] + "," +
+                            subjectTextAreaInputs[10] + "," +
+                            subjectTextAreaInputs[13]);
             // BLOCK 1 TRUE ROW
-            pw.write("BLOCKS");
+            int[] trueRowArray = new int[4];
+            int rowValue = subjectIndexMap.get(c1c2Map.get(answerTextAreaInputs[1]));
+            int colValue = subjectIndexMap.get(answerTextAreaInputs[1]);
+            trueRowArray[colValue-1] = rowValue;
+            rowValue = subjectIndexMap.get(c1c2Map.get(answerTextAreaInputs[4]));
+            colValue = subjectIndexMap.get(answerTextAreaInputs[4]);
+            trueRowArray[colValue-1] = rowValue;
+            rowValue = subjectIndexMap.get(c1c2Map.get(answerTextAreaInputs[7]));
+            colValue = subjectIndexMap.get(answerTextAreaInputs[7]);
+            trueRowArray[colValue-1] = rowValue;
+            rowValue = subjectIndexMap.get(c1c2Map.get(answerTextAreaInputs[10]));
+            colValue = subjectIndexMap.get(answerTextAreaInputs[10]);
+            trueRowArray[colValue-1] = rowValue;
+            for(int i = 0; i < 3; i++) {
+                trueRows[0] = trueRows[0].concat(String.valueOf(trueRowArray[i]));
+                trueRows[0] = trueRows[0].concat(",");
+            }
+            trueRows[0] = trueRows[0].concat(String.valueOf(trueRowArray[3]));
 
-            pw.write(blockRowTitle);
-            pw.write(rowTitlesStr);
-            pw.write(blockColTitle);
-            pw.write(colTitlesStr);
-            pw.write(trueRows[0]);
+
+            pw.println("BLOCKS");
+
+            pw.println(blockRowTitle);
+            pw.println(rowTitlesStr);
+            pw.println(blockColTitle);
+            pw.println(colTitlesStr);
+            pw.println(trueRows[0]);
 
             /* Block 2 */
             blockRowTitle = subjectTextAreaInputs[0];// CAT 1 ROW TITLE
@@ -778,19 +845,38 @@ public class GUI implements ActionListener{
                                 subjectTextAreaInputs[11] + "," +
                                 subjectTextAreaInputs[14]);
             // BLOCK 2 TRUE ROW
+            //trueRows[1] = trueRows[1].concat(String.valueOf(subjectIndexMap.get(c1c3Map.get(answerTextAreaInputs[2]))));
 
-            pw.write(blockRowTitle);
-            pw.write(rowTitlesStr);
-            pw.write(blockColTitle);
-            pw.write(colTitlesStr);
-            pw.write(trueRows[1]);
+            int[] trueRowArray2 = new int[4];
+            int rowValue2 = subjectIndexMap.get(c1c3Map.get(answerTextAreaInputs[2]));
+            int colValue2 = subjectIndexMap.get(answerTextAreaInputs[2]);
+            trueRowArray2[colValue2-1] = rowValue2;
+            rowValue2 = subjectIndexMap.get(c1c3Map.get(answerTextAreaInputs[5]));
+            colValue2 = subjectIndexMap.get(answerTextAreaInputs[5]);
+            trueRowArray2[colValue2-1] = rowValue2;
+            rowValue2 = subjectIndexMap.get(c1c3Map.get(answerTextAreaInputs[8]));
+            colValue2 = subjectIndexMap.get(answerTextAreaInputs[8]);
+            trueRowArray2[colValue2-1] = rowValue2;
+            rowValue2 = subjectIndexMap.get(c1c3Map.get(answerTextAreaInputs[11]));
+            colValue2 = subjectIndexMap.get(answerTextAreaInputs[11]);
+            trueRowArray2[colValue2-1] = rowValue2;
+            for(int i = 0; i < 3; i++) {
+                trueRows[1] = trueRows[1].concat(String.valueOf(trueRowArray2[i]));
+                trueRows[1] = trueRows[1].concat(",");
+            }
+            trueRows[1] = trueRows[1].concat(String.valueOf(trueRowArray2[3]));
+            pw.println(blockRowTitle);
+            pw.println(rowTitlesStr);
+            pw.println(blockColTitle);
+            pw.println(colTitlesStr);
+            pw.println(trueRows[1]);
 
             /* Block 3 */
             blockRowTitle = subjectTextAreaInputs[2];// CAT 3 ROW TITLE
-            rowTitlesStr = (    subjectTextAreaInputs[3] + "," + // Cat 1 row titles
-                                subjectTextAreaInputs[6] + "," +
-                                subjectTextAreaInputs[9] + "," +
-                                subjectTextAreaInputs[12]);
+            rowTitlesStr = (    subjectTextAreaInputs[5] + "," + // Cat 1 row titles
+                                subjectTextAreaInputs[8] + "," +
+                                subjectTextAreaInputs[11]+ "," +
+                                subjectTextAreaInputs[14]);
 
             blockColTitle = subjectTextAreaInputs[1];// CAT 2 COL TITLE
             colTitlesStr = (    subjectTextAreaInputs[4] + "," + // Cat 1 col titles
@@ -798,36 +884,59 @@ public class GUI implements ActionListener{
                                 subjectTextAreaInputs[10] + "," +
                                 subjectTextAreaInputs[13]);
             // BLOCK 3 TURE ROWS
-            pw.write(blockRowTitle);
-            pw.write(rowTitlesStr);
-            pw.write(blockColTitle);
-            pw.write(colTitlesStr);
-            pw.write(trueRows[2]);
+            //trueRows[2] = trueRows[2].concat(String.valueOf(subjectIndexMap.get(c3c2Map.get(answerTextAreaInputs[0]))));
 
-            pw.write("CLUES");
+            int[] trueRowArray3 = new int[4];
+            int rowValue3 = subjectIndexMap.get(c3c2Map.get(answerTextAreaInputs[1]));
+            int colValue3 = subjectIndexMap.get(answerTextAreaInputs[1]);
+            trueRowArray3[colValue3-1] = rowValue3;
+            rowValue3 = subjectIndexMap.get(c3c2Map.get(answerTextAreaInputs[4]));
+            colValue3 = subjectIndexMap.get(answerTextAreaInputs[4]);
+            trueRowArray3[colValue3-1] = rowValue3;
+            rowValue3 = subjectIndexMap.get(c3c2Map.get(answerTextAreaInputs[7]));
+            colValue3 = subjectIndexMap.get(answerTextAreaInputs[7]);
+            trueRowArray3[colValue3-1] = rowValue3;
+            rowValue3 = subjectIndexMap.get(c3c2Map.get(answerTextAreaInputs[10]));
+            colValue3 = subjectIndexMap.get(answerTextAreaInputs[10]);
+            trueRowArray[colValue3-1] = rowValue3;
+            for(int i = 0; i < 3; i++) {
+                trueRows[2] = trueRows[2].concat(String.valueOf(trueRowArray3[i]));
+                trueRows[2] = trueRows[2].concat(",");
+            }
+            trueRows[2] = trueRows[2].concat(String.valueOf(trueRowArray3[3]));
+            pw.println(blockRowTitle);
+            pw.println(rowTitlesStr);
+            pw.println(blockColTitle);
+            pw.println(colTitlesStr);
+            pw.println(trueRows[2]);
+
+            pw.println("CLUES");
 
             JPanel cPanel = (JPanel) inputComponents.getComponent(3);
-            JPanel clueInputPanel = (JPanel) cPanel.getComponent(1);
-            String[] clues = ((JTextArea)clueInputPanel.getComponent(0)).getText().split(",");
+            String[] clues = ((JTextArea)cPanel.getComponent(1)).getText().split(",");
             for(String s : clues) {
-                pw.write(s);
+                pw.println(s);
             }
 
-            pw.write("STORY");
+            pw.println("STORY");
             JPanel storyPanel = (JPanel) inputComponents.getComponent(4);
-            JPanel storyInputPanel = (JPanel) storyPanel.getComponent(1);
-            String story = ((JTextArea)storyInputPanel.getComponent(0)).getText();
+            String story = ((JTextArea)storyPanel.getComponent(1)).getText();
 
-            pw.write(story);
+            pw.println(story);
 
-            pw.write("ANSWER");
+            pw.println("ANSWER");
             // answerTextAreaInputs
-            String[] answer = new String[4];
-            answer[0] = (answerTextAreaInputs[0] + "," + answerTextAreaInputs[1] + "," + answerTextAreaInputs[2]);
-            answer[1] = (answerTextAreaInputs[3] + "," + answerTextAreaInputs[4] + "," + answerTextAreaInputs[5]);
-            answer[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
-            answer[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
-            pw.write("END");
+            String[] answerStr = new String[4];
+            answerStr[0] = (answerTextAreaInputs[0] + "," + answerTextAreaInputs[1] + "," + answerTextAreaInputs[2]);
+            answerStr[1] = (answerTextAreaInputs[3] + "," + answerTextAreaInputs[4] + "," + answerTextAreaInputs[5]);
+            answerStr[2] = (answerTextAreaInputs[6] + "," + answerTextAreaInputs[7] + "," + answerTextAreaInputs[8]);
+            answerStr[3] = (answerTextAreaInputs[9] + "," + answerTextAreaInputs[10] + "," + answerTextAreaInputs[11]);
+            pw.println(answerStr[0]);
+            pw.println(answerStr[1]);
+            pw.println(answerStr[2]);
+            pw.println(answerStr[3]);
+            pw.println("END");
+            pw.close();
         }
     }
 }
