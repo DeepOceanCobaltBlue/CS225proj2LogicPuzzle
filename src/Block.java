@@ -10,6 +10,7 @@
  * 2/21 [Andrew] - Updated class with more methods to display user errors and the proper graphic to match
  *
  * 2/21 [phoenix] - edited hint related methods
+ *                - small formatting edits
  * 2/21 [chris]   - added highlightedSquares reset functionality
  */
 
@@ -41,15 +42,17 @@ public class Block implements ActionListener {
     /* images displayed on individual Squares to display currentState */
     /* [0] = FALSE, [1] = TRUE */
     private static Image[] images;
+    private boolean clickable;
     private ArrayList<Square> highlightedSquares;
 
     // __ CONSTRUCTORS __
     public Block() { // default constructor
-        this.matrix = new Square[4][4];
-        this.blockRowTitle = null;
-        this.blockColTitle  = null;
-        this.rowTitles = new String[4];
-        this.columnTitles = new String[4];
+        matrix = new Square[4][4];
+        blockRowTitle = null;
+        blockColTitle  = null;
+        rowTitles = new String[4];
+        columnTitles = new String[4];
+        clickable = true;
         this.highlightedSquares = null;
     }
 
@@ -130,7 +133,7 @@ public class Block implements ActionListener {
      */
     private void changeSquareToOrFromTrue(Square clickedSquare, Square.State neighborState, Square.State clickedState) {
         int row = clickedSquare.getRowIndex();
-        int col = clickedSquare.getColIndex();
+        int col = clickedSquare.getColumnIndex();
 
         /* set each square in clickedSquares row to FALSE */
         for(int a = 0; a < matrix.length; a++) {
@@ -199,15 +202,22 @@ public class Block implements ActionListener {
 
     }
 
+
     // __ ACCESSORS __
     public Square[][] getSquares() { return this.matrix;} //    returns the given matrix of Square objects
     public String getBlockRowTitle() { return this.blockRowTitle;} //   returns the name of the row the Square is in
-    public String getBlockColTitle() { return this.blockColTitle;} //   returns the name of the column the Square is in
+    public String getBlockColumnTitle() { return this.blockColTitle;} //   returns the name of the column the Square is in
     public String[] getRowTitles() { return this.rowTitles;} //   returns the names of the rows that the Squares are in
     public String[] getColumnTitles() { return this.columnTitles;} //   returns the names of the columns that the Squares are in
     public Component getSquare(int a, int b) {
         return matrix[a][b];
     } //    returns the matrix placement of a requested Square
+
+    // __ MUTATORS __
+    public void setClickable(boolean clickable) {
+        this.clickable = clickable;
+    }
+
 
     // __ OVERRIDES __
 
@@ -219,25 +229,27 @@ public class Block implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        Square clicked = (Square)e.getSource();
-        if(!(this.highlightedSquares.isEmpty())) {
-            for(Square square : this.highlightedSquares) {
-                square.setBackground(null);
+        if (clickable) {
+            Square clicked = (Square)e.getSource();
+            if(!(this.highlightedSquares.isEmpty())) {
+                for(Square square : this.highlightedSquares) {
+                    square.setBackground(null);
+                }
+                this.highlightedSquares.clear();
             }
-            this.highlightedSquares.clear();
-        }
 
-        /* Set Square to next State in cycle and handle necessary changes to neighbor Squares */
-        switch(clicked.getCurrentState()) {
-            case EMPTY:
-                clicked.setCurrentState(Square.State.FALSE);
-                break;
-            case FALSE:/* change neighbor Squares to FALSE, current Square to TRUE */
-                changeSquareToOrFromTrue(clicked, Square.State.FALSE, Square.State.TRUE);
-                break;
-            case TRUE: /* change neighbor Squares to EMPTY, current Square to Empty */
-                changeSquareToOrFromTrue(clicked, Square.State.EMPTY, Square.State.EMPTY);
-                break;
+            /* Set Square to next State in cycle and handle necessary changes to neighbor Squares */
+            switch (clicked.getCurrentState()) {
+                case EMPTY:
+                    clicked.setCurrentState(Square.State.FALSE);
+                    break;
+                case FALSE:/* change neighbor Squares to FALSE, current Square to TRUE */
+                    changeSquareToOrFromTrue(clicked, Square.State.FALSE, Square.State.TRUE);
+                    break;
+                case TRUE: /* change neighbor Squares to EMPTY, current Square to Empty */
+                    changeSquareToOrFromTrue(clicked, Square.State.EMPTY, Square.State.EMPTY);
+                    break;
+            }
         }
     }
 

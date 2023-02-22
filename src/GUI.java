@@ -7,6 +7,9 @@
  * 2/20 [chris] - added menu
  *              - added leaderboard
  *              - added more game files( game2, game3, game4)
+ * 2/21 [phoenix] - error dialog functionality added
+ *                - small formatting edits
+ *                - error checking for board creation
  */
 
 import javax.imageio.ImageIO;
@@ -47,7 +50,10 @@ public class GUI implements ActionListener{
     private JPanel menuRootPane;
     private JPanel gameRootPane;
     private JPanel gameCreationRootPane;
+    private JDialog errorDialog;
     private JTextArea feedbackTextArea;
+    private JTextArea errorTextArea;
+
 
 
     // __ CONSTRUCTORS __
@@ -102,6 +108,20 @@ public class GUI implements ActionListener{
         /* bottom layer of menu */
         menuRootPane = new JPanel();
         menuRootPane.setLayout(new BoxLayout(menuRootPane, BoxLayout.Y_AXIS));
+
+        FlowLayout errorLayout = new FlowLayout();
+        errorLayout.setVgap(25);
+        errorLayout.setHgap(50);
+        errorDialog = new JDialog(rootFrame, "Error", true);
+        errorDialog.setSize(400,200);
+        errorDialog.getContentPane().setLayout(errorLayout);
+        errorTextArea = new JTextArea();
+        errorTextArea.setEditable(false);
+        errorTextArea.setLineWrap(true);
+        errorTextArea.setWrapStyleWord(true);
+        errorTextArea.setFont(new Font("Arial", Font.BOLD, 16));
+        errorTextArea.setSize(300, 200);
+        errorDialog.getContentPane().add(errorTextArea);
 
         /* Button panel for menu options */
         JPanel menuPanel = new JPanel();
@@ -508,7 +528,7 @@ public class GUI implements ActionListener{
         /* Subject Title */
         JPanel subPanelOne = new JPanel(new FlowLayout(FlowLayout.CENTER));
         subPanelOne.setBorder(new LineBorder(Color.BLACK));
-        JLabel categoryLabel = new JLabel(block.getBlockColTitle());
+        JLabel categoryLabel = new JLabel(block.getBlockColumnTitle());
         subPanelOne.add(categoryLabel);
         basePanel.add(subPanelOne);
 
@@ -588,6 +608,11 @@ public class GUI implements ActionListener{
         return rotatedImage;
     }
 
+    public void displayError(String errorMessage) {
+        errorTextArea.setText(errorMessage);
+        errorDialog.setVisible(true);
+    }
+
     // __ ACCESSORS __
     /**
      * Once GUI is created this method will return the root frame to the application.
@@ -595,15 +620,6 @@ public class GUI implements ActionListener{
      */
     public JFrame getDisplay() {
         return rootFrame;
-    }
-    // __ MUTATORS __
-    public void setGameBoard(GameBoard gameBoard) {
-        this.gameBoard = gameBoard;
-        this.blocks = gameBoard.getBlocks();
-        createGameInterface();
-    }
-    public void setControls(JButton[] functionButtons) {
-        this.controls = functionButtons;
     }
 
     private JTextArea getInfoPanel(JButton button) {
@@ -618,6 +634,18 @@ public class GUI implements ActionListener{
         return (JTextArea) infoPanel.getComponent(1);
     }
 
+    // __ MUTATORS __
+    public void setGameBoard(GameBoard gameBoard) {
+        this.gameBoard = gameBoard;
+        this.blocks = gameBoard.getBlocks();
+        createGameInterface();
+    }
+    public void setControls(JButton[] functionButtons) {
+        this.controls = functionButtons;
+    }
+    public void setFeedbackTAText(String input){
+        this.feedbackTextArea.setText(input);
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clicked = (JButton) e.getSource();
@@ -659,7 +687,13 @@ public class GUI implements ActionListener{
                 ta.setText(text);
                 break;
             case "Create": // create a new game file from data input into game creation window
-                createGameFile();
+                try {
+                    createGameFile();
+                } catch (IOException exception) {
+                    displayError("There was an issue creating your file. Please ensure your entry is properly formatted.");
+                } catch (NullPointerException exception) {
+                    displayError("There was an issue creating your file. Please ensure every field is filled out.");
+                }
                 break;
             case "Cancel": // cancel creating a new game file
                 switchWindow("Menu");
@@ -669,26 +703,25 @@ public class GUI implements ActionListener{
     }
 
 
-    public void setFeedbackTAText(String input){
-        this.feedbackTextArea.setText(input);
-    }
+
 
     /**
      * creates a new game file from inputs on game creation window.
      * no protection or error checking.
      */
-    private void createGameFile() {
+    private void createGameFile() throws IOException, NullPointerException {
         File directory = new File("Game files");
         int count = directory.listFiles().length;
         String filepath = ("Game Files\\Game" + (count + 1));
         File newGameFile = new File(filepath);
+        PrintWriter pw = null;
+
         try {
             newGameFile.createNewFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        PrintWriter pw;
         try {
             pw = new PrintWriter(newGameFile);
         } catch (FileNotFoundException e) {
@@ -698,7 +731,6 @@ public class GUI implements ActionListener{
         if(pw != null) {
             JPanel inputComponents = (JPanel) this.gameCreationRootPane.getComponent(1); // input panel
 
-            // TODO: trueRows don't work (0,0,0,0)
             /* Component hierarchy
             inputComponents
                 0 - subjectPanel

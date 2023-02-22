@@ -22,6 +22,8 @@
  * 2/20 [chris]   - refactored some methods to accommodate new code for new GUI items
  * 2/21 [Andrew] - updated class with documentation and overall cleanup
  * 2/21 [phoenix] - Finished hint system
+ *                - Finished file error system
+ *                - small formatting edits
  */
 
 import javax.swing.*;
@@ -47,7 +49,7 @@ public class LogicGameThreeByFour implements ActionListener {
     private Timer timer;
     private boolean runClock;
     /* Using the Hint feature penalizes the players total time */
-    private long penaltyTime;
+    private int penaltyTime;
     /* Used outside the game area to change the state of the game */
     private JButton[] functionButtons;
 
@@ -62,6 +64,11 @@ public class LogicGameThreeByFour implements ActionListener {
         this.gameBoard = null;
         createButtons();
         this.gui = new GUI(functionButtons);
+    }
+
+    public LogicGameThreeByFour(GameBoard gameBoard) {
+        this();
+        this.gameBoard = gameBoard;
     }
 
     // __ FUNCTIONS __
@@ -91,7 +98,7 @@ public class LogicGameThreeByFour implements ActionListener {
      * Extract and initialize game assets from game file
      * @param inputFile - the game file text document to read
      */
-    private void fileReader(File inputFile) throws FileNotFoundException, NullPointerException{
+    private void fileReader(File inputFile) throws FileNotFoundException, NullPointerException, RuntimeException {
         Scanner reader = null;
         try {
             reader = new Scanner(inputFile);
@@ -101,7 +108,6 @@ public class LogicGameThreeByFour implements ActionListener {
             String[] answer = null;
             /* Read in all text from Game File to initialize block objects and gameBoard */
             while(reader.hasNext()) {
-
                 String inputLine = reader.nextLine();
                 switch(inputLine) {
                     case "BLOCKS":
@@ -122,6 +128,7 @@ public class LogicGameThreeByFour implements ActionListener {
                                 case 2:
                                     blocks[1][0] = new Block(rowTitle, rowTitles, columnTitle, colTitles, trueRows);
                                     break;
+
                             }
                         }
 
@@ -148,6 +155,8 @@ public class LogicGameThreeByFour implements ActionListener {
                         }
                         answer = allAnswers.split(",");
                         break;
+                    default:
+                        throw new FileFormatException();
                 }
             }
 
@@ -184,14 +193,14 @@ public class LogicGameThreeByFour implements ActionListener {
      * Reveal an unrevealed or incorrect TRUE square
      */
     private void giveHint() {
-        ArrayList<Integer> errBlockIndices = gameBoard.getErrorBlockIndices(false);
+        ArrayList<Integer> errBlockIndices = gameBoard.getErrorIndices(false);
 
         if (errBlockIndices.size() > 0) {
             gameBoard.showAllErrors(errBlockIndices);
         } else {
-            errBlockIndices = gameBoard.getErrorBlockIndices(true);
+            errBlockIndices = gameBoard.getErrorIndices(true);
             if (errBlockIndices.size() > 0) {
-                gameBoard.showSquareInBlock(errBlockIndices);
+                gameBoard.revealSquareInBlock(errBlockIndices);
             } else {
                 gui.setFeedbackTAText("Just Submit");
             }
@@ -242,14 +251,14 @@ public class LogicGameThreeByFour implements ActionListener {
 
         switch (clicked.getText()) {
             case "Submit":
-                boolean win = gameBoard.getErrorBlockIndices(true).size() == 0;
+                boolean win = gameBoard.getErrorIndices(true).size() == 0;
                 runClock = false; // do not allow timer to run
                 clock(); // stop timer
                 gui.setFeedbackTAText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
                         (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.\nYour total time is " +
-                                (currentTime+penaltyTime) + "." :
-                                "There were " + gameBoard.getErrorBlockIndices(true).size() + " mistakes.") + "\n\n\n Thanks for playing!");
+                                (currentTime+penaltyTime) + "." : "The mistakes are shown on the board.") + "\n\n\n Thanks for playing!");
                 gameBoard.showAllErrors();
+                gameBoard.endGame();
                 break;
             case "Hint":
                 giveHint();
@@ -257,7 +266,9 @@ public class LogicGameThreeByFour implements ActionListener {
                 break;
             case "Start Game":
                 try {
-                    fileReader(importGameBoard());// get game file and initialize game board
+                    if (gameBoard == null) {
+                        fileReader(importGameBoard());// get game file and initialize game board
+                    }
                     this.gui.setGameBoard(this.gameBoard); // creates game interface and switches display to game
                     this.gui.switchWindow("Game");
                     this.gui.getDisplay().revalidate();
@@ -267,9 +278,10 @@ public class LogicGameThreeByFour implements ActionListener {
                     clock(); // start timer
                 } catch (NullPointerException exception) {
                     // User exited the dialog, no action required.
-                    //gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
                 } catch (FileNotFoundException exception) {
-                    //gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
+                    gui.displayError("There was an error finding your file. Please ensure the chosen file has not been deleted or moved.");
+                } catch (RuntimeException exception) {
+                    gui.displayError("There was an error loading your file. Please ensure it has been formatted properly.");
                 }
                 break;
             case "Leaderboard":
@@ -292,16 +304,22 @@ public class LogicGameThreeByFour implements ActionListener {
     }
 
     // __ ACCESSORS __
-    public long getCurrentTime() { //   returns the time on the stopwatch
-        return currentTime;
-    }
     public GUI getGUI() { //    returns the current GUI object
         return gui;
     }
     public GameBoard getGameBoard() { //    returns the current GameBoard object
         return gameBoard;
     }
-    public long getPenaltyTime() { //   returns the penaltyTimer recorded by the stopwatch
+    public int getCurrentTime() { //   returns the time on the stopwatch
+        return currentTime;
+    }
+    public int getPenaltyTime() { //   returns the penaltyTimer recorded by the stopwatch
         return penaltyTime;
+    }
+    public JButton[] getFunctionButtons() {
+        return functionButtons;
+    }
+    public Timer getTimer() {
+        return timer;
     }
 }

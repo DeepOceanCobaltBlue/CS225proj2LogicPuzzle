@@ -4,9 +4,12 @@
  *              - wrote version 1.0 of the class and added documentation
  * 2/18 [chris] - removed filepath from game board and added a parameterized constructor
  *              - updated class comment to reflect change, updated comments
+ * 2/20 [phoenix] - added dialog and text area for error feedback
  * 2/20 [Andrew] -Updated class organization
  *               -added more documentation (comments)
  * 2/21 [phoenix] - created hint related methods
+ *                - added comments for hint related methods
+ *                - small formatting edits
  */
 
 import javax.swing.*;
@@ -50,7 +53,12 @@ public class GameBoard {
         this.notes = null;
     }
 
-    public ArrayList<Integer> getErrorBlockIndices(boolean includeEmpty) {
+    /**
+     * Gets the indices for each Block in the 2D array 'blocks' with an error.
+     * @param includeEmpty Indicates whether empty blocks should be included as an error.
+     * @return An ArrayList of Integers. The indices for each block with an error.
+     */
+    public ArrayList<Integer> getErrorIndices(boolean includeEmpty) {
         ArrayList<Integer> errorIndices = new ArrayList<Integer>();
 
         for (int i = 0; i < 3; i++) {
@@ -61,21 +69,46 @@ public class GameBoard {
         return errorIndices;
     }
 
+    /**
+     * Calls display errors on every Block. Puts a red background on each Square with an error.
+     */
     public void showAllErrors() {
         for (int index = 0; index < 3; index++) {
             blocks[(index/2)%2][index%2].displayErrors(true);
         }
     }
+
+    /**
+     * Calls displayErrors() on every Block with the indicated indices. Puts a red background on each Square with an error.
+     * @param errorIndices Contains the indices for each Block in the 2D array 'blocks' with an error.
+     */
     public void showAllErrors(ArrayList<Integer> errorIndices) {
         for (Integer index : errorIndices) {
             blocks[(index/2)%2][index%2].displayErrors(false);
         }
     }
 
-
-    public void showSquareInBlock(ArrayList<Integer> errorIndices) {
+    /**
+     * Calls setEmptyCorrect on a random block with the indicated indices
+     * @param errorIndices Contains the indices for each Block in the 2D array 'blocks' with an error.
+     */
+    public void revealSquareInBlock(ArrayList<Integer> errorIndices) {
         int randIndex = (int)(Math.random() * errorIndices.size());
         blocks[(errorIndices.get(randIndex)/2)%2][errorIndices.get(randIndex)%2].setEmptyCorrect();
+    }
+
+    /**
+     * Called at the end of the game to disable components and display the users errors.
+     */
+    public void endGame() {
+        for (Block[] blRow : blocks) {
+            for (Block block : blRow) {
+                if (block != null) {
+                    block.displayErrors(true);
+                    block.setClickable(false);
+                }
+            }
+        }
     }
 
     // __ ACCESSORS __
