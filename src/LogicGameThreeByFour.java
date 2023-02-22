@@ -24,6 +24,7 @@
  * 2/21 [phoenix] - Finished hint system
  *                - Finished file error system
  *                - small formatting edits
+ * 2/21 [Andrew]  -updated hint feedback text
  */
 
 import javax.swing.*;
@@ -202,7 +203,7 @@ public class LogicGameThreeByFour implements ActionListener {
             if (errBlockIndices.size() > 0) {
                 gameBoard.revealSquareInBlock(errBlockIndices);
             } else {
-                gui.setFeedbackTAText("Just Submit");
+                gui.setFeedbackTAText("The current status of the puzzle board is 100% correct. \n\n Please click the submit button to view your results!");
             }
         }
 
@@ -253,10 +254,11 @@ public class LogicGameThreeByFour implements ActionListener {
             case "Submit":
                 boolean win = gameBoard.getErrorIndices(true).size() == 0;
                 runClock = false; // do not allow timer to run
+                float finalTime = (currentTime + penaltyTime)/60;
                 clock(); // stop timer
                 gui.setFeedbackTAText("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + (win ? "You Won!" : "You Lost." ) + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n" +
                         (win ? "You took " + currentTime + " seconds to solve the puzzle, with " + penaltyTime + " additional seconds added for hints.\nYour total time is " +
-                                (currentTime+penaltyTime) + "." : "The mistakes are shown on the board.") + "\n\n\n Thanks for playing!");
+                                (currentTime+penaltyTime) + " seconds, or " + (finalTime) + " minutes." : "The mistakes are shown on the board.") + "\n\n\n Thanks for playing!");
                 gameBoard.showAllErrors();
                 gameBoard.endGame();
                 break;

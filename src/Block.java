@@ -12,6 +12,7 @@
  * 2/21 [phoenix] - edited hint related methods
  *                - small formatting edits
  * 2/21 [chris]   - added highlightedSquares reset functionality
+ * 2/21 [Andrew] - adjusted feedback text display
  */
 
 import javax.imageio.ImageIO;
