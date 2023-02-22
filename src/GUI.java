@@ -5,11 +5,11 @@
  * 2/19 [chris] - infoPanel and controlPanel completed
  *              - added timer
  * 2/20 [chris] - added menu
- *              - added leaderboard
  *              - added more game files( game2, game3, game4)
  * 2/21 [phoenix] - error dialog functionality added
  *                - small formatting edits
  *                - error checking for board creation
+ * 2/21 [chris]   - got game file creation functionality 99% done. No time to final debug and test
  */
 
 import javax.imageio.ImageIO;
