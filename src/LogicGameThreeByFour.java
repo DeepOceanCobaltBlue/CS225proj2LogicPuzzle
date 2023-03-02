@@ -168,8 +168,6 @@ public class LogicGameThreeByFour implements ActionListener {
                 reader.close();
             }
         }
-
-
     }
 
     /**
@@ -184,11 +182,6 @@ public class LogicGameThreeByFour implements ActionListener {
         }
         return null;
     }
-
-    /**
-     * Check if every Square of every Block has the correct state.
-     * @return If correct state, return true, else return false.
-     */
 
     /**
      * Reveal an unrevealed or incorrect TRUE square
@@ -206,7 +199,6 @@ public class LogicGameThreeByFour implements ActionListener {
                 gui.setFeedbackTAText("The current status of the puzzle board is 100% correct. \n\n Please click the submit button to view your results!");
             }
         }
-
     }
 
 
